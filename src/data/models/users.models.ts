@@ -31,27 +31,14 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    phoneNumber: {
-      type: String,
-      unique: true,
-    },
-    phoneVerified: {
-      type: Boolean,
-      default: false,
-    },
     steps: {
       type: Number,
     },
-    countryCode: {
-      type: String,
-    },
+   
     active: {
       type: Boolean,
       default: false,
       required: true,
-    },
-    emergencyContactNumber: {
-      type: String,
     },
   },
   {
