@@ -1,16 +1,24 @@
 
 
+import { CheckUserInterface, IncommingUserBody, OutGoingUserBody } from "../../core/interface/auth.interface";
 import { userModel } from "../models/index";
 export const createUser = async (
-  body: any,
-): Promise<any> => {
+  body: IncommingUserBody,
+): Promise<OutGoingUserBody> => {
   const data = await userModel.create(body);
-  const response: any = {
+  const response: OutGoingUserBody = {
     userId: data._id,
-    phoneNumber: data.phoneNumber as string,
     userName: data.userName as string,
-    countryCode: data.countryCode as string,
+    steps: data.steps as number,
+    email:  data.email as string
   };
   return response;
 };
 
+export const checkUser=async(filter:CheckUserInterface):Promise <boolean>=>{
+  const data = await userModel.findOne({ ...filter });
+  if (!data) {
+    return false;
+  }
+  return true;
+}
