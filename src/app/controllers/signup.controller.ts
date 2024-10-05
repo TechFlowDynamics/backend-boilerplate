@@ -1,6 +1,6 @@
 import { Response, Request, NextFunction } from "express";
 import {
-  signupService,
+  signupServiceOne,
 } from "../service/auth.service";
 import { responseHandler } from "../../core/handlers/response.handlers";
 import {
@@ -11,28 +11,27 @@ import {
 import { ResponseMessages } from "../../core/constants/cloud.constants";
 import errorHandlerMiddleware from "../../core/handlers/mongooseError.handler";
 
-export const register = async (
+export const registerOne = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const data = req.body;
-    const userData = await signupService(data);
+    const body = req.body;
+    const data = await signupServiceOne(body);
     
 
     const value = {
-      countryCode: userData.data.countryCode,
-      phoneNumber: data.phoneNumber,
-     
-      lastMiddleware: "phoneSender",
-      phoneSender: true,
+      userName:data.userName,
+      email:data.email,
+      steps:data.steps,
+      emailSender: true,
     };
 
     req.body.value = value;
     responseHandler(
       res,
-      userData,
+      {data},
       200,
       ResponseMessages.RES_MSG_USER_CREATED_SUCCESSFULLY_EN,
     );
