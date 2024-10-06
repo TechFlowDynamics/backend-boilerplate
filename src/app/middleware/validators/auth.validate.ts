@@ -2,10 +2,9 @@ import { Request, Response, NextFunction } from "express";
 import Joi from "joi";
 import { defaults } from "../../../core/constants/validation.interface";
 
-export const userSignup = (req: Request, res: Response, next: NextFunction) => {
+export const userstepsOne = (req: Request, res: Response, next: NextFunction) => {
   const schema = Joi.object({
-    phoneNumber: Joi.string().trim().required(),
-    countryCode: Joi.string(),
+    email:Joi.string().lowercase().email().required(),
     userName: Joi.string().lowercase().trim().min(3).regex(/^[\w](?!.*?\.{2})[\w.]{1,28}[\w]$/,'string'),
     password: Joi.string().min(8).trim().required(),
   });
