@@ -1,7 +1,8 @@
 
 import {
   checkUser,
-  upsertUser,
+  createUser,
+  // upsertUser,
 } from "../../data/dal/user.dal";
 import { CustomError } from "../../core/handlers/error.handlers";
 import { ResponseMessages } from "../../core/constants/cloud.constants";
@@ -10,15 +11,15 @@ import {
 } from "../../core/utils/util";
 
 import { Purpose } from "../../core/enum/auth.enum";
+import { IncommingUserBody, OutGoingUserBody } from "../../core/interface/auth.interface";
 
 
-export const signupService = async (data: any) => {
-  const { phoneNumber, password } = data;
+export const signupServiceOne = async (data: IncommingUserBody) :Promise<OutGoingUserBody>=> {
 
-  // check if phoneNumber already exists
+  // check if username already exists
   const isUserExist = await checkUser({
-    phoneNumber: phoneNumber,
-    phoneVerified: true,
+    userName: data.userName,
+    email: data.email
   });
   if (isUserExist) {
     throw new CustomError(
@@ -26,17 +27,16 @@ export const signupService = async (data: any) => {
       ResponseMessages.RES_MSG_USER_EMAIL_ALREADY_EXISTS_EN,
     );
   }
-  data.password = await generateHash(password);
-  const create = await upsertUser({ phoneNumber: phoneNumber }, data);
+  data.password = await generateHash(data.password);
+  data.steps=1;
+  const create = await createUser( data);
 
-  const response: any = {
-    data: {
-      userId: create.userId,
-      userName: create.userName,
-      phoneNumber: create.phoneNumber,
-      purpose: Purpose.SIGNUP,
-      countryCode: create.countryCode,
-    },
+  const response: OutGoingUserBody = {
+    userId: create.userId,
+    userName: create.userName,
+    purpose: Purpose.SIGNUP,
+    steps: 1,
+    email: create.email
   };
 
   return response;
