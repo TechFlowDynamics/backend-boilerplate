@@ -1,7 +1,4 @@
-import {
-  checkUser,
-  createUser,
-} from "../../data/dal/user.dal";
+import { checkUser, createUser } from "../../data/dal/user.dal";
 import { CustomError } from "../../core/handlers/error.handlers";
 import { ResponseMessages } from "../../core/constants/cloud.constants";
 import { generateHash } from "../../core/utils/util";
@@ -13,7 +10,7 @@ import {
 } from "../../core/interface/auth.interface";
 
 export const signupServiceOne = async (
-  data: IncommingUserBody
+  data: IncommingUserBody,
 ): Promise<OutGoingUserBody> => {
   // check if username already exists
   const isUserExist = await checkUser({
@@ -29,7 +26,7 @@ export const signupServiceOne = async (
   if (isUserExist) {
     throw new CustomError(
       ResponseMessages.RES_MSG_USER_EMAIL_ALREADY_EXISTS_EN,
-      "400"
+      "400",
     );
   }
   data.password = await generateHash(data.password);
@@ -41,7 +38,7 @@ export const signupServiceOne = async (
     userName: create.userName,
     purpose: Purpose.SIGNUP,
     steps: 1,
-    email: "create.email",
+    email: create.email,
   };
 
   return response;
