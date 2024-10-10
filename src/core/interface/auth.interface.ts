@@ -41,3 +41,35 @@ export interface UserSignupOutput {
     phoneVerified?: boolean;
   };
 }
+
+export interface OtpDataInterface {
+  $or?: Array<object>;
+  phoneNumber?: string;
+  countryCode?: string;
+  purpose: string;
+  email: string;
+  userName?: string;
+}
+
+export interface OtpDataOutputInterface extends OtpDataInterface {
+  hash?: string;
+  code?: string;
+  resendFlag?: boolean;
+}
+
+export interface OtpFilterInterface {
+  $or?: Array<object>;
+  phoneNumber?: string;
+  purpose?: string;
+  email?: string;
+  flag?: string;
+  hash?: string;
+  code?: string;
+}
+
+export interface OutputOTPInterface extends OtpFilterInterface {
+  userId?: string;
+  countryCode: string;
+  hash: string;
+  phoneNumber: string;
+}
