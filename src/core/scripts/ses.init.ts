@@ -1,6 +1,5 @@
-import * as AWS from "aws-sdk";
 import { SendRawEmailRequest } from "aws-sdk/clients/ses";
-import config from "src/config";
+import config from "../../config";
 import { ses } from "./aws.scripts";
 
 export const AWSSendMail = async (email: {

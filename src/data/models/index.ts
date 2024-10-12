@@ -1,3 +1,3 @@
 import userModel from "./users.models";
-
-export { userModel };
+import otpModel from "./otp.model";
+export { userModel, otpModel };
