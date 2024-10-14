@@ -1,0 +1,43 @@
+import { Request, Response, NextFunction } from "express";
+import { decodeUserToken } from "../../core/utils/util";
+import { ResponseMessages } from "../../core/constants/cloud.constants";
+import { responseHandler } from "../../core/handlers/response.handlers";
+import { UserIncomingDetails } from "../../core/interface/auth.interface";
+import {
+  CustomError,
+  getErrorCode,
+  getErrorMessage,
+} from "../../core/handlers/error.handlers";
+export const verifyToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const token: string | undefined = req
+      .header("access-token")
+      ?.replace("Bearer", "");
+    if (!token) {
+      throw new CustomError(
+        "Invalid token ",
+        ResponseMessages.RES_MSG_INVALID_TOKEN_EN,
+      );
+    }
+
+    const data: UserIncomingDetails = decodeUserToken(token);
+    req.userData = data;
+    if (!req.userData) {
+      responseHandler(
+        res,
+        null,
+        401,
+        ResponseMessages.RES_MSG_INVALID_TOKEN_EN,
+      );
+    }
+    next();
+  } catch (error) {
+    const code = getErrorCode(error) as number;
+    const message = getErrorMessage(error);
+    return responseHandler(res, null, code, message);
+  }
+};
