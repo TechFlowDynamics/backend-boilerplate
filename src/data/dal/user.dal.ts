@@ -3,14 +3,18 @@ import {
   CheckUserInterface,
   IncommingUserBody,
   OutGoingUserBody,
+  UpdateUserInterface,
   UserIncomingDetails,
+  UserOuput,
   UserSignupOutput,
 } from "../../core/interface/auth.interface";
 import { userModel } from "../models/index";
 import dal from "./index";
+import { CustomError } from "../../core/handlers/error.handlers";
+import { ResponseMessages } from "../../core/constants/cloud.constants";
 
 export const createUser = async (
-  body: IncommingUserBody
+  body: IncommingUserBody,
 ): Promise<OutGoingUserBody> => {
   try {
     const data = await dal.create(userModel, body);
@@ -28,7 +32,7 @@ export const createUser = async (
 };
 
 export const checkUser = async (
-  filter: CheckUserInterface
+  filter: CheckUserInterface,
 ): Promise<boolean> => {
   const data = await dal.findOne(userModel, filter);
   if (!data) {
@@ -38,7 +42,7 @@ export const checkUser = async (
 };
 
 export const getUser = async (
-  filter: UserIncomingDetails
+  filter: UserIncomingDetails,
 ): Promise<UserSignupOutput> => {
   const data = await dal.findOne(userModel, filter);
   const response: UserSignupOutput = {
@@ -49,4 +53,34 @@ export const getUser = async (
     },
   };
   return response;
+};
+export const updateUser = async (
+  filter: UserIncomingDetails,
+  body: UpdateUserInterface,
+): Promise<UserOuput> => {
+  const data = await userModel.findOneAndUpdate(
+    filter,
+    { ...body },
+    {
+      new: true,
+      useFindAndModify: false,
+    },
+  );
+  if (!data) {
+    throw new CustomError(
+      "User Not found",
+      ResponseMessages.RES_MSG_USER_NOT_FOUND_EN,
+    );
+  }
+  const reponse: UserOuput = {
+    fullName: data?.fullName as string,
+    userId: data?._id as mongoose.Types.ObjectId,
+    email: data?.email as string,
+    userName: data?.userName as string,
+    phoneVerified: data?.phoneVerified,
+    countryCode: data.countryCode as string,
+    steps: data.steps as number,
+    isCompleted: data.isCompleted,
+  };
+  return reponse;
 };

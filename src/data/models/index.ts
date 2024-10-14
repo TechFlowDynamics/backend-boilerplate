@@ -1,3 +1,4 @@
 import userModel from "./users.models";
 import otpModel from "./otp.model";
-export { userModel, otpModel };
+import refreshTokenModel from "./refreshToken.models";
+export { userModel, otpModel, refreshTokenModel };
