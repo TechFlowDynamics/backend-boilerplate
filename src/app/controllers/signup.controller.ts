@@ -1,5 +1,5 @@
 import { Response, Request, NextFunction } from "express";
-import { signupServiceOne } from "../service/auth.service";
+import { otpVerify, signupServiceOne } from "../service/auth.service";
 import { responseHandler } from "../../core/handlers/response.handlers";
 import {
   CustomError,
@@ -47,6 +47,30 @@ export const registerOne = async (
   } catch (error) {
     console.log("🚀 ~ error:", error);
 
+    const errorMongoose = errorHandlerMiddleware(error, res);
+    let code = errorMongoose.statusCode;
+    let message = errorMongoose.msg;
+    if (errorMongoose.mongooseError) {
+      return responseHandler(res, null, code, message);
+    } else {
+      code = getErrorCode(error) as number;
+      message = getErrorMessage(error);
+      return responseHandler(res, null, code, message);
+    }
+  }
+};
+
+export const verifyOTP = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const body = req.body;
+
+    const data = await otpVerify(body);
+    responseHandler(res, data, 200, "Verification Completed");
+  } catch (error) {
     const errorMongoose = errorHandlerMiddleware(error, res);
     let code = errorMongoose.statusCode;
     let message = errorMongoose.msg;
