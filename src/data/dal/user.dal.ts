@@ -73,12 +73,8 @@ export const updateUser = async (
     );
   }
   const reponse: UserOuput = {
-    fullName: data?.fullName as string,
     userId: data?._id as mongoose.Types.ObjectId,
-    email: data?.email as string,
     userName: data?.userName as string,
-    phoneVerified: data?.phoneVerified,
-    countryCode: data.countryCode as string,
     steps: data.steps as number,
     isCompleted: data.isCompleted,
   };

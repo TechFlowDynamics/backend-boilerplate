@@ -4,6 +4,7 @@ export interface CheckUserInterface {
   $or?: Array<object>;
   userName?: string;
   email?: string;
+  _id?: mongoose.Types.ObjectId;
 }
 
 export interface IncommingUserBody extends CheckUserInterface {
@@ -122,12 +123,19 @@ export interface UserOuput {
   userId?: mongoose.Types.ObjectId;
   phoneNumber?: string;
   userName: string;
-  emergencyContactNumber?: string;
-  email?: string;
   steps?: number;
-  fullName?: string;
-  countryCode: string;
+  profilePhoto?: string;
   isCompleted?: boolean;
-  phoneVerified?: boolean;
-  emailVerified?: boolean;
+}
+
+export interface IncommingUserStepTwo {
+  firstName: string;
+  lastName: string;
+  phoneNumber: number;
+  media: string;
+}
+
+export interface OutGoingUserStepTwo {
+  userId: mongoose.Types.ObjectId;
+  steps: number;
 }

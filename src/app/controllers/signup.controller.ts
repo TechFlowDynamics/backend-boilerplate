@@ -1,5 +1,9 @@
 import { Response, Request, NextFunction } from "express";
-import { otpVerify, signupServiceOne } from "../service/auth.service";
+import {
+  otpVerify,
+  signupServiceOne,
+  signupServiceTwo,
+} from "../service/auth.service";
 import { responseHandler } from "../../core/handlers/response.handlers";
 import {
   CustomError,
@@ -71,6 +75,42 @@ export const verifyOTP = async (
     const data = await otpVerify(body);
     responseHandler(res, data, 200, "Verification Completed");
   } catch (error) {
+    const errorMongoose = errorHandlerMiddleware(error, res);
+    let code = errorMongoose.statusCode;
+    let message = errorMongoose.msg;
+    if (errorMongoose.mongooseError) {
+      return responseHandler(res, null, code, message);
+    } else {
+      code = getErrorCode(error) as number;
+      message = getErrorMessage(error);
+      return responseHandler(res, null, code, message);
+    }
+  }
+};
+
+export const registerTwo = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const body = req.value;
+    const userId = req.userData.userId;
+    body.profilePhoto =
+      (req.userData.presignedData?.url as string) +
+      "/" +
+      req.userData.presignedData?.fields.key;
+    const data = await signupServiceTwo(userId, body);
+
+    responseHandler(
+      res,
+      { data },
+      200,
+      ResponseMessages.RES_MSG_USER_CREATED_SUCCESSFULLY_EN,
+    );
+  } catch (error) {
+    console.log("🚀 ~ error:", error);
+
     const errorMongoose = errorHandlerMiddleware(error, res);
     let code = errorMongoose.statusCode;
     let message = errorMongoose.msg;

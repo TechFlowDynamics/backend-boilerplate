@@ -16,5 +16,6 @@ export interface IUser extends Document {
   steps?: number;
   active: boolean;
   createdAt?: Date;
+  profilePhoto?: string;
   updatedAt?: Date;
 }

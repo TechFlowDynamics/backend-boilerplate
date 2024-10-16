@@ -10,12 +10,16 @@ import {
 import { Purpose } from "../../core/enum/auth.enum";
 import {
   IncommingUserBody,
+  IncommingUserStepTwo,
   OtpFilterInterface,
   OutGoingUserBody,
+  OutGoingUserStepTwo,
   UserLoginOutputInterface,
+  UserOuput,
 } from "../../core/interface/auth.interface";
 import { findOtp, verifyOTP } from "../../data/dal/otp.dal";
 import { createRefresehToken } from "../../data/dal/token.dal";
+import mongoose from "mongoose";
 
 export const signupServiceOne = async (
   data: IncommingUserBody,
@@ -87,4 +91,26 @@ export const otpVerify = async (
       refreshToken: refreshToken,
     } as UserLoginOutputInterface;
   }
+};
+
+export const signupServiceTwo = async (
+  userId: mongoose.Types.ObjectId,
+  body: IncommingUserStepTwo,
+): Promise<UserOuput> => {
+  const isUserExist = await checkUser({
+    _id: userId,
+  });
+  if (!isUserExist) {
+    throw new CustomError(ResponseMessages.RES_MSG_USER_NOT_FOUND_EN, "400");
+  }
+  const data = await updateUser({ _id: userId }, body);
+
+  const response: UserOuput = {
+    steps: data.steps,
+    userId: data.userId,
+    userName: data.userName,
+    profilePhoto: data.profilePhoto,
+    isCompleted: data.isCompleted,
+  };
+  return response;
 };
