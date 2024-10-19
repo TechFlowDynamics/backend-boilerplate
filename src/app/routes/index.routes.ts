@@ -8,12 +8,13 @@ import { errorHandler } from "../middleware/errors/errorHandler.middleware";
 import authRouter from "./auth.routes";
 import userRouter from "./user.routes";
 import uploadRouter from "./upload.routes";
-
+import questionRouter from "./question.routes";
 const router = express.Router();
 
 router.use("/auth", authRouter);
 router.use("/user", userRouter);
 router.use("/upload", uploadRouter);
+router.use("/questions", questionRouter);
 
 router.get(
   "/hello-world",
