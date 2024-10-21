@@ -1,5 +1,6 @@
 import dal from "../../data/dal";
 import {
+  IQuestion,
   PaginationInterface,
   QuestionOutputInterface,
   QuestoinFilterInterface,
@@ -28,4 +29,11 @@ export const getService = async (
     projection,
   );
   return data as QuestionOutputInterface[];
+};
+
+export const questionDetails = async (slug: string): Promise<IQuestion> => {
+  const filter = { titleSlug: `${slug}` };
+
+  const response = await dal.findOne(questionsModel, filter);
+  return response as IQuestion;
 };

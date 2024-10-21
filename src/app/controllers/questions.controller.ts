@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ResponseMessages } from "../../core/constants/cloud.constants";
 import { responseHandler } from "../../core/handlers/response.handlers";
-import { getService } from "../service/questions.service";
+import { getService, questionDetails } from "../service/questions.service";
 import {
   PaginationInterface,
   QuestoinFilterInterface,
@@ -44,6 +44,20 @@ export const getList = async (
 
     console.log("🚀 ~ filter:", filter);
     const data = await getService(filter, pagination);
+    responseHandler(res, { data }, 200, ResponseMessages.OK);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getQuestions = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const params = req.params;
+    const data = await questionDetails(params.slug);
     responseHandler(res, { data }, 200, ResponseMessages.OK);
   } catch (error) {
     next(error);
