@@ -1,0 +1,54 @@
+{
+  "name": "bike-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "nodemon src/index.ts",
+    "prettier": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
+    "lint": "npm run prettier && eslint ./src",
+    "lint-fix": "eslint ./src --fix",
+    "dev": "nodemon src/index.ts"
+  },
+  "keywords": [
+    "rtc",
+    "bike"
+  ],
+  "author": "mohit-vivek",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.6.2",
+    "mongoose": "^8.4.0",
+    "nodemon": "^3.1.1",
+    "webpack-node-externals": "^3.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.9.1",
+    "@types/bcrypt": "^5.0.2",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/express-session": "^1.18.0",
+    "@types/node": "^20.14.8",
+    "@typescript-eslint/eslint-plugin": "^8.2.0",
+    "@typescript-eslint/parser": "^8.2.0",
+    "eslint": "^9.9.1",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "globals": "^15.9.0",
+    "prettier": "^3.3.3",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.5.2",
+    "typescript-eslint": "^8.2.0",
+    "webpack": "^5.92.1",
+    "webpack-cli": "^5.1.4"
+  }
+}

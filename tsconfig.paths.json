@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@core/*": ["src/core/*"],
+      "@app/*": ["src/app/*"],
+      "@controllers/*": ["src/app/controllers/*"],
+      "@middlewares/*": ["src/app/middlewares/*"],
+      "@service/*": ["src/app/service/*"],
+      "@models/*": ["src/data/models/*"],
+      "@dal/*": ["src/data/dal/*"],
+      "@constants/*": ["src/core/constants/*"],
+      "@handlers/*": ["src/core/handlers/*"],
+      "@utils/*": ["src/core/utils/*"],
+      "@scripts/*": ["src/core/scripts/*"],
+      "@interface/*": ["src/core/interface/*"]
+    }
+  }
+}
