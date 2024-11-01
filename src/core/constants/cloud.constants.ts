@@ -104,7 +104,7 @@ export const ResponseMessages = Object.freeze({
 
   //////////////////////////////
   //master
-  RES_MSG_MASTER_ENTRY_DELETED:"Master entry deleted.",
+  RES_MSG_MASTER_ENTRY_DELETED: "Master entry deleted.",
   // manager
   RES_MSG_MANAGER_CREATED_SUCCESSFULLY_EN: "Manager created successfully.",
 

@@ -1,5 +1,5 @@
 {
-  "name": "bike-project",
+  "name": "code-project",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,11 +9,11 @@
     "prettier": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "lint": "npm run prettier && eslint ./src",
     "lint-fix": "eslint ./src --fix",
-    "dev": "nodemon src/index.ts"
+    "dev": "node dist/index.js"
   },
   "keywords": [
     "rtc",
-    "bike"
+    "code"
   ],
   "author": "mohit-vivek",
   "license": "ISC",

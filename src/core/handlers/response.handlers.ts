@@ -2,7 +2,7 @@ import { Response } from "express";
 
 export const responseHandler = (
   res: Response,
-  body: any ,
+  body: any,
   status: number | 200,
   message?: string,
 ) => {

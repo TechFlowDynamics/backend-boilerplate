@@ -23,6 +23,17 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
     },
+    phoneNumber: {
+      type: String,
+      unique: true,
+    },
+    phoneVerified: {
+      type: Boolean,
+      default: false,
+    },
+    countryCode: {
+      type: String,
+    },
     email: {
       type: String,
       index: true,
@@ -34,7 +45,7 @@ const userSchema = new mongoose.Schema(
     steps: {
       type: Number,
     },
-   
+
     active: {
       type: Boolean,
       default: false,

@@ -6,12 +6,12 @@ interface ENV {
   CLIENT_URL: string | undefined;
   NODE_ENV: string | undefined;
   MONGODB_CONNECTION_URL: string;
+  DB_NAME: string;
   SECRET_ACCESS_KEY: string | undefined;
   ACCESS_KEY_ID: string | undefined;
   S3_PUBLIC_BUCKET_NAME: string | undefined;
   PORT: number | undefined;
   AUTHORIZATION_KEY: string | undefined;
-  TWILIO_FAMILY_NAME: string | undefined;
   JWT_SECRET: string | undefined;
   F_BASE_URL: string | undefined;
   F_BASE_NGROK_URL: string | undefined;
@@ -47,6 +47,7 @@ interface ENV {
 const getConfig = (): ENV => {
   return {
     ACCESS_KEY_ID: process.env.ACCESS_KEY_ID,
+    DB_NAME: process.env.ACCESS_KEY_ID ? process.env.ACCESS_KEY_ID : "",
     SECRET_ACCESS_KEY: process.env.SECRET_ACCESS_KEY,
     REFRESH_TOKEN_SECERT: process.env.REFRESH_TOKEN_SECERT,
     ACCESS_TOKEN_SECERT: process.env.ACCESS_TOKEN_SECERT,
@@ -75,7 +76,6 @@ const getConfig = (): ENV => {
     AWS_SES_SECRET_ACCESS_KEY: process.env.AWS_SES_SECRET_ACCESS_KEY,
     AWS_SENDERS_EMAIL: process.env.AWS_SENDERS_EMAIL,
     JWT_SECRET: process.env.JWT_SECRET,
-    TWILIO_FAMILY_NAME: process.env.TWILIO_FAMILY_NAME,
     FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
     FIREBASE_AUTH_DOMAIN: process.env.FIREBASE_AUTH_DOMAIN,
     FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,

@@ -1,7 +1,5 @@
 import { Response, Request, NextFunction } from "express";
-import {
-  signupServiceOne,
-} from "../service/auth.service";
+import { signupServiceOne } from "../service/auth.service";
 import { responseHandler } from "../../core/handlers/response.handlers";
 import {
   getErrorCode,
@@ -19,19 +17,18 @@ export const registerOne = async (
   try {
     const body = req.body;
     const data = await signupServiceOne(body);
-    
 
     const value = {
-      userName:data.userName,
-      email:data.email,
-      steps:data.steps,
+      userName: data.userName,
+      email: data.email,
+      steps: data.steps,
       emailSender: true,
     };
 
     req.body.value = value;
     responseHandler(
       res,
-      {data},
+      { data },
       200,
       ResponseMessages.RES_MSG_USER_CREATED_SUCCESSFULLY_EN,
     );
@@ -50,4 +47,3 @@ export const registerOne = async (
     }
   }
 };
-

@@ -3,7 +3,7 @@ import config from "../../config";
 import { Request, Response, NextFunction } from "express";
 
 let isConnected: boolean = false;
-
+const dbConnectionUrl = `${config.MONGODB_CONNECTION_URL}/${config.DB_NAME}`;
 export async function connectToDatabase() {
   try {
     if (isConnected) {
@@ -11,7 +11,6 @@ export async function connectToDatabase() {
       return isConnected;
     }
 
-    const dbConnectionUrl = config.MONGODB_CONNECTION_URL;
     await mongoose.connect(dbConnectionUrl);
     isConnected = true;
 
@@ -34,7 +33,6 @@ export async function connectToServerlessDatabase(
       next();
     }
 
-    const dbConnectionUrl = config.MONGODB_CONNECTION_URL;
     await mongoose.connect(dbConnectionUrl);
     console.log("Connected to MongoDB database");
 

@@ -1,6 +1,3 @@
 import userModel from "./users.models";
 
-export {
-  userModel,
-
-};
+export { userModel };
