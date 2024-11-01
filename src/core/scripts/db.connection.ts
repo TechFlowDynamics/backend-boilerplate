@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import config from "../../config";
 import { Request, Response, NextFunction } from "express";
+import customLogger from "../../app/middleware/logger.middleware";
 
 let isConnected: boolean = false;
 const dbConnectionUrl = `${config.MONGODB_CONNECTION_URL}/${config.DB_NAME}`;
@@ -22,10 +23,26 @@ export async function connectToDatabase() {
     throw error;
   }
 }
+export async function connectToReqDatabase(req: Request, res: Response, next: NextFunction) {
+  try {
+    if (isConnected) {
+      next();
+    }
+
+    await mongoose.connect(dbConnectionUrl);
+    isConnected = true;
+
+    customLogger.info("Connected to MongoDB database");
+    next();
+  } catch (error) {
+    console.error("Error connecting to MongoDB database:", error);
+    throw error;
+  }
+}
 export async function connectToServerlessDatabase(
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) {
   try {
     if (isConnected) {
@@ -44,13 +61,13 @@ export async function connectToServerlessDatabase(
 }
 
 // Connect to the database when this module is imported
-connectToDatabase().catch(error => console.error("Error:", error));
+connectToDatabase().catch((error) => console.error("Error:", error));
 
 export function getDatabaseConnection() {
   if (!isConnected) {
     throw new Error("Database is not connected");
   } else {
-    connectToDatabase().catch(error => console.error("Error:", error));
+    connectToDatabase().catch((error) => console.error("Error:", error));
   }
   return mongoose.connection;
 }
