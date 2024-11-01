@@ -5,6 +5,7 @@ import { connectToReqDatabase } from "./core/scripts/db.connection";
 
 import routes from "./app/routes/index.routes";
 import { setupLogger } from "./app/middleware/logger.middleware";
+import { errorHandler } from "./app/middleware/errors/errorHandler.middleware";
 
 const app = express();
 setupLogger(app);
@@ -20,5 +21,7 @@ app.use(
 app.use(connectToReqDatabase);
 
 app.use("/api/v1", routes);
+
+app.use(errorHandler);
 
 export default app;
