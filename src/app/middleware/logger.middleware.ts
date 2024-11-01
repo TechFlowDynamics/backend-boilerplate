@@ -34,7 +34,6 @@ class CustomLogger {
   }
 }
 
-
 const customLogger = new CustomLogger();
 
 export const setupLogger = (app: Express) => {
@@ -50,7 +49,7 @@ export const setupLogger = (app: Express) => {
     includeNewLine: true,
     filterParameters: ["password", "token"], // Exclude sensitive information
     stream: {
-      write: (message) => {
+      write: message => {
         customLogger.info(message.trim());
         return true;
       },

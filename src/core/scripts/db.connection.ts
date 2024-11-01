@@ -23,7 +23,11 @@ export async function connectToDatabase() {
     throw error;
   }
 }
-export async function connectToReqDatabase(req: Request, res: Response, next: NextFunction) {
+export async function connectToReqDatabase(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     if (isConnected) {
       next();
@@ -42,7 +46,7 @@ export async function connectToReqDatabase(req: Request, res: Response, next: Ne
 export async function connectToServerlessDatabase(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   try {
     if (isConnected) {
@@ -61,13 +65,13 @@ export async function connectToServerlessDatabase(
 }
 
 // Connect to the database when this module is imported
-connectToDatabase().catch((error) => console.error("Error:", error));
+connectToDatabase().catch(error => console.error("Error:", error));
 
 export function getDatabaseConnection() {
   if (!isConnected) {
     throw new Error("Database is not connected");
   } else {
-    connectToDatabase().catch((error) => console.error("Error:", error));
+    connectToDatabase().catch(error => console.error("Error:", error));
   }
   return mongoose.connection;
 }

@@ -4,7 +4,7 @@ export const responseHandler = (
   res: Response,
   body: any,
   status: number | 200,
-  message?: string
+  message?: string,
 ) => {
   const retunBody = {
     status: "success",

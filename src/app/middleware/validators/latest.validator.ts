@@ -6,7 +6,7 @@ import { validateRequest } from "../../../core/utils/validateRequest.utils";
 export const userStepsOne = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const payload = req.body;
   const validatedValue = validateRequest(userSchema, payload);

@@ -12,12 +12,14 @@ router.get(
   "/hello-world",
   async (req: Request, res: Response, next: NextFunction) => {
     return res.status(200).json({ data: "Hello from backend" });
-  }
+  },
 );
 
 router.use((req: Request, res: Response, next: NextFunction) => {
   next(
-    new NotFound(`${ResponseMessages.RES_MSG_NOT_FOUND_URL_EN}: ${req.originalUrl}`)
+    new NotFound(
+      `${ResponseMessages.RES_MSG_NOT_FOUND_URL_EN}: ${req.originalUrl}`,
+    ),
   );
 });
 
