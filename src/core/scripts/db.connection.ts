@@ -13,6 +13,7 @@ export async function connectToDatabase() {
     }
 
     await mongoose.connect(dbConnectionUrl);
+
     isConnected = true;
 
     console.log("Connected to MongoDB database");
@@ -33,6 +34,7 @@ export async function connectToReqDatabase(
       next();
     }
 
+    console.log("🚀 ~ dbConnectionUrl:", dbConnectionUrl)
     await mongoose.connect(dbConnectionUrl);
     isConnected = true;
 

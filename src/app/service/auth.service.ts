@@ -21,12 +21,12 @@ export const signupServiceOne = async (
     userName: data.userName,
     email: data.email,
   });
-  if (isUserExist) {
-    throw new CustomError(
-      "User Already Exist",
-      ResponseMessages.RES_MSG_USER_EMAIL_ALREADY_EXISTS_EN,
-    );
-  }
+  // if (isUserExist) {
+  //   throw new CustomError(
+  //     "User Already Exist",
+  //     ResponseMessages.RES_MSG_USER_EMAIL_ALREADY_EXISTS_EN,
+  //   );
+  // }
   data.password = await generateHash(data.password);
   data.steps = 1;
   const create = await createUser(data);

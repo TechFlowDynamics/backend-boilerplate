@@ -48,7 +48,7 @@ interface ENV {
 const getConfig = (): ENV => {
   return {
     ACCESS_KEY_ID: process.env.ACCESS_KEY_ID,
-    DB_NAME: process.env.ACCESS_KEY_ID ? process.env.ACCESS_KEY_ID : "",
+    DB_NAME: process.env.DB_NAME ? process.env.DB_NAME : "",
     SECRET_ACCESS_KEY: process.env.SECRET_ACCESS_KEY,
     REFRESH_TOKEN_SECERT: process.env.REFRESH_TOKEN_SECERT,
     ACCESS_TOKEN_SECERT: process.env.ACCESS_TOKEN_SECERT,

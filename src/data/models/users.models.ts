@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema<IUser>(
     },
     userName: {
       type: String,
+      required: true,
       unique: true,
     },
     password: {
@@ -26,6 +27,7 @@ const userSchema = new mongoose.Schema<IUser>(
     },
     phoneNumber: {
       type: String,
+      sparse: true,
       unique: true,
     },
     phoneVerified: {
@@ -37,6 +39,7 @@ const userSchema = new mongoose.Schema<IUser>(
     },
     email: {
       type: String,
+      required: true,
       index: true,
     },
     emailVerified: {

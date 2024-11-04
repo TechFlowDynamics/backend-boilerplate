@@ -8,44 +8,37 @@ import {
 
 import { ResponseMessages } from "../../core/constants/cloud.constants";
 import errorHandlerMiddleware from "../../core/handlers/mongooseError.handler";
+// import { NotFound } from "../middleware/errors";
 
 export const registerOne = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   try {
-    const body = req.body;
-    console.log("🚀 ~ body:", body);
-    const data = await signupServiceOne(body);
+    const body = req.value as any;
+    // const data = await signupServiceOne(body);
 
-    const value = {
-      userName: data.userName,
-      email: data.email,
-      steps: data.steps,
-      lastMiddleware: "emailSender",
-      emailSender: true,
-    };
+    // return responseHandler(
+    //   res,
+    //   {data} ,
+    //   200,
+    //   ResponseMessages.RES_MSG_USER_CREATED_SUCCESSFULLY_EN
+    // );
 
-    req.body.value = value;
-    responseHandler(
-      res,
-      { data },
-      200,
-      ResponseMessages.RES_MSG_USER_CREATED_SUCCESSFULLY_EN,
-    );
-
-    next();
+    // next();
   } catch (error) {
-    const errorMongoose = errorHandlerMiddleware(error, res);
-    let code = errorMongoose.statusCode;
-    let message = errorMongoose.msg;
-    if (errorMongoose.mongooseError) {
-      return responseHandler(res, null, code, message);
-    } else {
-      code = getErrorCode(error) as number;
-      message = getErrorMessage(error);
-      return responseHandler(res, null, code, message);
-    }
+    // next(error)
+    console.log("🚀 ~ error:", error)
+    // const errorMongoose = errorHandlerMiddleware(error, res);
+    // let code = errorMongoose.statusCode;
+    // let message = errorMongoose.msg;
+    // if (errorMongoose.mongooseError) {
+    //   return responseHandler(res, null, code, message);
+    // } else {
+    //   code = getErrorCode(error) as number;
+    //   message = getErrorMessage(error);
+    //   return responseHandler(res, null, code, message);
+    // }
   }
 };

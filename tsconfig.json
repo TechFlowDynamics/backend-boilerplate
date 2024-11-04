@@ -13,7 +13,7 @@
     "strict": true,
     "skipLibCheck": true,
     "experimentalDecorators": true,
-    "typeRoots": ["./src/core/@types", "./node_modules/@types"],
+    "typeRoots": ["./src/core/types", "./node_modules/@types"],
     "baseUrl": "."
   },
   "include": ["src/**/*.ts"],

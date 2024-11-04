@@ -22,6 +22,6 @@ app.use(connectToReqDatabase);
 
 app.use("/api/v1", routes);
 
-app.use(errorHandler);
+// app.use(errorHandler);
 
 export default app;

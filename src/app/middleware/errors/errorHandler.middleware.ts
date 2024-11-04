@@ -7,18 +7,23 @@ import {
   BadRequest,
   GeneralError,
   InsufficientAccessError,
-  NotFound,
+  // NotFound,
   Unauthorized,
 } from "../errors"; // Import your custom error classes
 import { JoiValidationError } from "./joiError.middleware";
 import { responseHandler } from "../../../core/handlers/response.handlers";
+import {
+  CustomError,
+  getErrorCode,
+  getErrorMessage,
+} from "../../../core/handlers/error.handlers";
 
 // Error handling middleware
 export const errorHandler = (
   err: any,
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   // Log the error
   customLogger.error(`Error handler ${err.message || "Unknown error"}`);
@@ -37,8 +42,8 @@ export const errorHandler = (
     err instanceof BadRequest ||
     err instanceof ApplicationError ||
     err instanceof InsufficientAccessError ||
-    err instanceof Unauthorized ||
-    err instanceof NotFound
+    err instanceof Unauthorized 
+    // err instanceof NotFound
   ) {
     const messages = err.message;
     const data = {
@@ -47,6 +52,17 @@ export const errorHandler = (
       details: messages,
     };
     return responseHandler(res, data, err.getCode(), "Error");
+  }
+
+  if (err instanceof CustomError) {
+    const message = getErrorMessage(err);
+    const code = getErrorCode(err);
+    const data = {
+      status: "error",
+      statusCode: code,
+      details: `${message}`,
+    };
+    return responseHandler(res, data, code as number, "${message}");
   }
 
   // Handle custom GeneralErrors
@@ -61,7 +77,7 @@ export const errorHandler = (
 
   // Handle Mongoose validation errors
   if (err instanceof mongoose.Error.ValidationError) {
-    const messages = Object.values(err.errors).map(error => error.message);
+    const messages = Object.values(err.errors).map((error) => error.message);
     const data = {
       status: "error",
       statusCode: 400,
@@ -81,7 +97,7 @@ export const errorHandler = (
   }
 
   // Handle Mongoose duplicate key errors
-  if (err.code === 11000) {
+  if (String(err.code) === "11000") {
     const data = {
       status: "error",
       statusCode: 409,
@@ -93,11 +109,5 @@ export const errorHandler = (
   // Handle other application errors
   const statusCode = err.status || 500;
   const message = err.message || "An unexpected error occurred";
-
-  // Send error response
-  res.status(statusCode).json({
-    status: "error",
-    statusCode,
-    message,
-  });
+  return responseHandler(res, null, statusCode, message);
 };
