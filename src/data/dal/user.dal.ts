@@ -12,14 +12,19 @@ import dal from "./index";
 export const createUser = async (
   body: IncommingUserBody
 ): Promise<OutGoingUserBody> => {
-  const data = await dal.create(userModel, body);
-  const response: OutGoingUserBody = {
-    userId: data._id as mongoose.Types.ObjectId,
-    userName: data.userName as string,
-    steps: data.steps as number,
-    email: data.email as string,
-  };
-  return response;
+  try {
+    const data = await dal.create(userModel, body);
+    const response: OutGoingUserBody = {
+      userId: data._id as mongoose.Types.ObjectId,
+      userName: data.userName as string,
+      steps: data.steps as number,
+      email: data.email as string,
+    };
+    return response;
+  } catch (error) {
+    console.log("🚀 ~ error:", error);
+    throw error;
+  }
 };
 
 export const checkUser = async (

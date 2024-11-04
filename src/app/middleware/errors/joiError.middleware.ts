@@ -6,7 +6,7 @@ class JoiValidationError extends GeneralError {
     super("Joi validation error");
   }
 
-  getCode() {
+  getCode(): number {
     return 406; // HTTP Status Code for Not Acceptable
   }
 }

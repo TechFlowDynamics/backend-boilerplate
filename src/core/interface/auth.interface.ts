@@ -1,8 +1,9 @@
 import mongoose, { Types } from "mongoose";
 
 export interface CheckUserInterface {
-  userName: string;
-  email: string;
+  $or?: Array<object>;
+  userName?: string;
+  email?: string;
 }
 
 export interface IncommingUserBody extends CheckUserInterface {

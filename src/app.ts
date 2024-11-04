@@ -18,7 +18,7 @@ app.use(
   }),
 );
 
-app.use(connectToReqDatabase);
+// app.use(connectToReqDatabase);
 
 app.use("/api/v1", routes);
 

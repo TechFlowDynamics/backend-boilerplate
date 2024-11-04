@@ -4,6 +4,6 @@ import { userStepsOne } from "../middleware/validators/latest.validator";
 
 const router = Router();
 
-router.route("/register-steps-1").post( registerOne);
+router.route("/register-steps-1").post(userStepsOne, registerOne);
 
 export default router;

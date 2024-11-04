@@ -30,7 +30,7 @@ export const errorHandler = (
 
   // Handle Joi validation errors
   if (err instanceof JoiValidationError) {
-    const messages = err.message.map((detail: any) => detail.message);
+    const messages = err.message
     const data = {
       status: "error",
       statusCode: err.getCode(),
@@ -83,7 +83,7 @@ export const errorHandler = (
       statusCode: 400,
       details: messages,
     };
-    return responseHandler(res, data, 409, "Validation Error");
+    return responseHandler(res, data, 400, "Validation Error");
   }
 
   // Handle Mongoose Cast Errors
