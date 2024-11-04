@@ -7,7 +7,7 @@ import {
   BadRequest,
   GeneralError,
   InsufficientAccessError,
-  // NotFound,
+  NotFound,
   Unauthorized,
 } from "../errors"; // Import your custom error classes
 import { JoiValidationError } from "./joiError.middleware";
@@ -42,8 +42,8 @@ export const errorHandler = (
     err instanceof BadRequest ||
     err instanceof ApplicationError ||
     err instanceof InsufficientAccessError ||
-    err instanceof Unauthorized 
-    // err instanceof NotFound
+    err instanceof Unauthorized ||
+    err instanceof NotFound
   ) {
     const messages = err.message;
     const data = {
