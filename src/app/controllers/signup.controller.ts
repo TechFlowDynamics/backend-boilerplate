@@ -9,29 +9,44 @@ import {
 
 import { ResponseMessages } from "../../core/constants/cloud.constants";
 import errorHandlerMiddleware from "../../core/handlers/mongooseError.handler";
+import { getOTP } from "../service/otp.service";
+import { Purpose } from "../../core/enum/auth.enum";
 // import { NotFound } from "../middleware/errors";
 
 export const registerOne = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
-    const body = req.body as any;
+    const body = req.value;
     const data = await signupServiceOne(body);
+    const otp = await getOTP({
+      email: data.email,
+      purpose: Purpose.SIGNUP,
+      userName: data.userName,
+    });
+    const value = {
+      email: data.email,
+      lastMiddleware: "emailSender",
+      emailSender: true,
+      code: otp.code,
+    };
+    console.log("🚀 ~ value:", value);
 
-    return responseHandler(
+    req.body.value = value;
+
+    responseHandler(
       res,
-      {data}  ,
-      // null,
+      { data },
       200,
-      ResponseMessages.RES_MSG_USER_CREATED_SUCCESSFULLY_EN
+      ResponseMessages.RES_MSG_USER_CREATED_SUCCESSFULLY_EN,
     );
 
-    // next();
+    next();
   } catch (error) {
     console.log("🚀 ~ error:", error);
-    
+
     const errorMongoose = errorHandlerMiddleware(error, res);
     let code = errorMongoose.statusCode;
     let message = errorMongoose.msg;
