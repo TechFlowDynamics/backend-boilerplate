@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { IUser } from "../../core/interface/user.interface";
+import { string } from "joi";
 
 // Define Mongoose Schema
 const userSchema = new mongoose.Schema<IUser>(
@@ -8,6 +9,9 @@ const userSchema = new mongoose.Schema<IUser>(
       type: String,
     },
     firstName: {
+      type: String,
+    },
+    profilePhoto: {
       type: String,
     },
     lastName: {

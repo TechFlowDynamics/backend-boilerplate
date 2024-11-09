@@ -1,11 +1,14 @@
 import { subjectBody } from "../constants/email.constants";
 import validationInterface from "../constants/validation.interface";
 import { EmailParams } from "../../core/interface/email.interface";
+import config from "../../config";
 
 export const userVerifyAccountTemplate = (
   to: string,
   code: string,
 ): EmailParams => {
+  console.log("🚀 ~ code:userverfiyAccountTemplate", code);
+
   return {
     to: [to],
     subject: subjectBody.userRegisterEmail,
