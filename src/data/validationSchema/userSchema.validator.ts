@@ -15,6 +15,5 @@ export const userStepTwoSchema = Joi.object({
   firstName: Joi.string().min(3).required(),
   lastName: Joi.string().min(2),
   phoneNumber: Joi.string().trim().required(),
-  mimeType: Joi.string().required(),
-  fileName: Joi.string().required(),
+  profileUrl: Joi.string().trim(),
 });

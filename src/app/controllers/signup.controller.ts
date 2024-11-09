@@ -6,7 +6,6 @@ import {
 } from "../service/auth.service";
 import { responseHandler } from "../../core/handlers/response.handlers";
 import {
-  CustomError,
   getErrorCode,
   getErrorMessage,
 } from "../../core/handlers/error.handlers";
@@ -96,10 +95,7 @@ export const registerTwo = async (
   try {
     const body = req.value;
     const userId = req.userData.userId;
-    body.profilePhoto =
-      (req.userData.presignedData?.url as string) +
-      "/" +
-      req.userData.presignedData?.fields.key;
+
     const data = await signupServiceTwo(userId, body);
 
     responseHandler(
