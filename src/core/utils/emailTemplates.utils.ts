@@ -1,7 +1,7 @@
 import { subjectBody } from "../constants/email.constants";
 import validationInterface from "../constants/validation.interface";
 import { EmailParams } from "../../core/interface/email.interface";
-import config from "src/config";
+import config from "../../config";
 
 export const userVerifyAccountTemplate = (
   to: string,

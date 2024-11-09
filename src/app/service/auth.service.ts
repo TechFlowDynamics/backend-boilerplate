@@ -1,13 +1,25 @@
-import { checkUser, createUser } from "../../data/dal/user.dal";
+import { checkUser, createUser, updateUser } from "../../data/dal/user.dal";
 import { CustomError } from "../../core/handlers/error.handlers";
 import { ResponseMessages } from "../../core/constants/cloud.constants";
-import { generateHash } from "../../core/utils/util";
+import {
+  generateAccessToken,
+  generateHash,
+  generateRefreshToken,
+} from "../../core/utils/util";
 
 import { Purpose } from "../../core/enum/auth.enum";
 import {
   IncommingUserBody,
+  IncommingUserStepTwo,
+  OtpFilterInterface,
   OutGoingUserBody,
+  OutGoingUserStepTwo,
+  UserLoginOutputInterface,
+  UserOuput,
 } from "../../core/interface/auth.interface";
+import { findOtp, verifyOTP } from "../../data/dal/otp.dal";
+import { createRefresehToken } from "../../data/dal/token.dal";
+import mongoose from "mongoose";
 
 export const signupServiceOne = async (
   data: IncommingUserBody,
@@ -41,5 +53,64 @@ export const signupServiceOne = async (
     email: create.email,
   };
 
+  return response;
+};
+
+export const otpVerify = async (
+  data: OtpFilterInterface,
+): Promise<UserLoginOutputInterface> => {
+  if (data.purpose === Purpose.FORGET_PASSWORD) {
+    const response = await findOtp(data);
+    const send: UserLoginOutputInterface = {
+      data: {
+        email: response.email,
+        hash: response.hash,
+        purpose: data.purpose,
+      },
+    };
+    return send;
+  } else {
+    const verifiedUser = await verifyOTP(data);
+    const response = await updateUser(
+      { email: verifiedUser.email },
+      { phoneVerified: true },
+    );
+
+    const token = generateAccessToken(response);
+    const refreshToken = generateRefreshToken(response);
+    const hashRefresh = await generateHash(refreshToken);
+    await createRefresehToken({
+      userId: String(response.userId),
+      refreshToken: refreshToken,
+      hash: hashRefresh,
+    });
+
+    return {
+      data: response,
+      accessToken: token,
+      refreshToken: refreshToken,
+    } as UserLoginOutputInterface;
+  }
+};
+
+export const signupServiceTwo = async (
+  userId: mongoose.Types.ObjectId,
+  body: IncommingUserStepTwo,
+): Promise<UserOuput> => {
+  const isUserExist = await checkUser({
+    _id: userId,
+  });
+  if (!isUserExist) {
+    throw new CustomError(ResponseMessages.RES_MSG_USER_NOT_FOUND_EN, "400");
+  }
+  const data = await updateUser({ _id: userId }, body);
+
+  const response: UserOuput = {
+    steps: data.steps,
+    userId: data.userId,
+    userName: data.userName,
+    profilePhoto: data.profilePhoto,
+    isCompleted: data.isCompleted,
+  };
   return response;
 };
