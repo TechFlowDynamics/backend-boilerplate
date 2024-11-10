@@ -32,6 +32,7 @@ interface ENV {
   CACHE_DB_HOST: string | undefined;
   CACHE_DB_PASSWORD: string | undefined;
   SEED_ADMIN_USERNAME: string | undefined;
+  TWILIO_FAMILY_NAME: string | undefined;
   SEED_ADMIN_PASSWORD: string | undefined;
   AWS_REGION: string | undefined;
   AWS_SES_REGION: string | undefined;
@@ -65,6 +66,8 @@ const getConfig = (): ENV => {
     GOOGLE_CALLBACK_URL_LOCAL: process.env.GOOGLE_CALLBACK_URL_LOCAL
       ? process.env.GOOGLE_CALLBACK_URL_LOCAL
       : "",
+    TWILIO_FAMILY_NAME: process.env.TWILIO_FAMILY_NAME,
+
     GOOGLE_CALLBACK_URL_UAT: process.env.GOOGLE_CALLBACK_URL_UAT
       ? process.env.GOOGLE_CALLBACK_URL_UAT
       : "",
