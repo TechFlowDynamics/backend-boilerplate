@@ -2,7 +2,7 @@ import app from "./app";
 import config from "./config";
 import { connectToDatabase } from "./core/scripts/db.connection";
 
-const PORT = config.PORT ?? 8080;
+const PORT = config.PORT ?? 8081;
 
 app.listen(PORT, async () => {
   console.log("🚀 ~ app.listen ~ PORT:", `http:/localhost:${PORT}`);

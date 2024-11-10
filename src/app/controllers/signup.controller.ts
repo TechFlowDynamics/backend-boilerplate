@@ -16,12 +16,14 @@ export const registerOne = async (
 ) => {
   try {
     const body = req.body;
+    console.log("🚀 ~ body:", body);
     const data = await signupServiceOne(body);
 
     const value = {
       userName: data.userName,
       email: data.email,
       steps: data.steps,
+      lastMiddleware: "emailSender",
       emailSender: true,
     };
 
