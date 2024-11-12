@@ -7,9 +7,10 @@ export const responseHandler = (
   message?: string,
 ) => {
   const retunBody = {
-    ...body,
-    status: status,
+    status: "success",
+    statusCode: status,
     message: message || "",
+    ...body,
   };
   return res.status(status).json(retunBody);
 };
