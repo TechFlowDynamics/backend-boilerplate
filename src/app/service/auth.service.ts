@@ -81,7 +81,7 @@ export const otpVerify = async (
     const verifiedUser = await verifyOTP(data);
     const response = await updateUser(
       { email: verifiedUser.email },
-      { phoneVerified: true },
+      { emailVerified: true },
     );
 
     const token = generateAccessToken(response);
@@ -124,7 +124,7 @@ export const signupServiceTwo = async (
 };
 
 export const loginService = async (body: LoginUserIncommingInterface) => {
-  const data = await findUser({ userName: body.email as string });
+  const data = await findUser({ email: body.email as string });
 
   const isMatch = await compareHash(
     String(body.password),
