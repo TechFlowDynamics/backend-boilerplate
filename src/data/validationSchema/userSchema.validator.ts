@@ -18,3 +18,8 @@ export const userStepTwoSchema = Joi.object({
   mimeType: Joi.string().required(),
   fileName: Joi.string().required(),
 });
+
+export const loginSchema = Joi.object({
+  email: Joi.string().lowercase().email().required(),
+  password: Joi.string().min(8).trim().required(),
+});

@@ -1,7 +1,14 @@
-import { checkUser, createUser, updateUser } from "../../data/dal/user.dal";
+import {
+  checkUser,
+  createUser,
+  findUser,
+  getUser,
+  updateUser,
+} from "../../data/dal/user.dal";
 import { CustomError } from "../../core/handlers/error.handlers";
 import { ResponseMessages } from "../../core/constants/cloud.constants";
 import {
+  compareHash,
   generateAccessToken,
   generateHash,
   generateRefreshToken,
@@ -11,6 +18,7 @@ import { Purpose } from "../../core/enum/auth.enum";
 import {
   IncommingUserBody,
   IncommingUserStepTwo,
+  LoginUserIncommingInterface,
   OtpFilterInterface,
   OutGoingUserBody,
   OutGoingUserStepTwo,
@@ -111,6 +119,32 @@ export const signupServiceTwo = async (
     userName: data.userName,
     profilePhoto: data.profilePhoto,
     isCompleted: data.isCompleted,
+  };
+  return response;
+};
+
+export const loginService = async (body: LoginUserIncommingInterface) => {
+  const data = await findUser({ userName: body.email as string });
+
+  const isMatch = await compareHash(
+    String(body.password),
+    String(data.password),
+  );
+  if (!isMatch) {
+    throw new CustomError(
+      "Invalid Credentials ",
+      ResponseMessages.RES_MSG_INVALID_PASSWORD,
+    );
+  }
+  const accessToken = generateAccessToken(data);
+  const refreshToken = generateRefreshToken(data);
+  const response = {
+    data: {
+      userId: data.userId,
+      userName: data.userName,
+    },
+    accessToken: accessToken,
+    refreshToken: refreshToken,
   };
   return response;
 };

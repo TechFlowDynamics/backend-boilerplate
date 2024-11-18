@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import {
   CheckUserInterface,
   IncommingUserBody,
+  LoginUserOuputInterface,
   OutGoingUserBody,
   UpdateUserInterface,
   UserIncomingDetails,
@@ -79,4 +80,22 @@ export const updateUser = async (
     isCompleted: data.isCompleted,
   };
   return reponse;
+};
+
+export const findUser = async (
+  filter: UserIncomingDetails,
+): Promise<LoginUserOuputInterface> => {
+  const data = await userModel.findOne({ ...filter });
+  if (!data) {
+    throw new CustomError(
+      "User Not present, Please register",
+      ResponseMessages.RES_MSG_USER_NOT_FOUND_EN,
+    );
+  }
+  const response: LoginUserOuputInterface = {
+    userName: data?.userName,
+    userId: data?._id as string,
+    password: data.password,
+  };
+  return response;
 };

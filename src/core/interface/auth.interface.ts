@@ -51,6 +51,7 @@ export interface OtpDataInterface {
   countryCode?: string;
   purpose: string;
   email: string;
+
   userName?: string;
 }
 
@@ -138,4 +139,15 @@ export interface IncommingUserStepTwo {
 export interface OutGoingUserStepTwo {
   userId: mongoose.Types.ObjectId;
   steps: number;
+}
+
+export interface LoginUserOuputInterface {
+  userId?: string;
+  userName?: string;
+  password: string;
+}
+
+export interface LoginUserIncommingInterface {
+  password?: string;
+  email?: string;
 }

@@ -33,3 +33,17 @@ export const userStepTwo = (
     next();
   }
 };
+
+export const loginValidate = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const payload = req.body;
+  const validatedValue = validateRequest(userSchema, payload);
+
+  if (validatedValue) {
+    req.value = validatedValue;
+    next();
+  }
+};

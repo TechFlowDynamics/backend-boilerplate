@@ -1,5 +1,6 @@
 import { Response, Request, NextFunction } from "express";
 import {
+  loginService,
   otpVerify,
   signupServiceOne,
   signupServiceTwo,
@@ -70,8 +71,7 @@ export const verifyOTP = async (
   next: NextFunction,
 ) => {
   try {
-    const body = req.body;
-
+    const body = req.value;
     const data = await otpVerify(body);
     responseHandler(res, data, 200, "Verification Completed");
   } catch (error) {
@@ -111,6 +111,34 @@ export const registerTwo = async (
   } catch (error) {
     console.log("🚀 ~ error:", error);
 
+    const errorMongoose = errorHandlerMiddleware(error, res);
+    let code = errorMongoose.statusCode;
+    let message = errorMongoose.msg;
+    if (errorMongoose.mongooseError) {
+      return responseHandler(res, null, code, message);
+    } else {
+      code = getErrorCode(error) as number;
+      message = getErrorMessage(error);
+      return responseHandler(res, null, code, message);
+    }
+  }
+};
+
+export const login = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const body = req.value;
+    const data = await loginService(body);
+    responseHandler(
+      res,
+      data,
+      200,
+      ResponseMessages.RES_MSG_USER_LOGIN_SUCCESSFULLY_EN,
+    );
+  } catch (error) {
     const errorMongoose = errorHandlerMiddleware(error, res);
     let code = errorMongoose.statusCode;
     let message = errorMongoose.msg;
