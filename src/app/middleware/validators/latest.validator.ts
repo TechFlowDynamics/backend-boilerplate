@@ -3,13 +3,14 @@ import { Request, Response, NextFunction } from "express";
 import {
   userSchema,
   userStepTwoSchema,
-} from "../../../data/validationSchema/userSchema.validator";
+  verifyOTPSchema,
+} from "../../../data/validators/schema/userValidation.schema";
 import { validateRequest } from "../../../core/utils/validateRequest.utils";
 
 export const userStepsOne = (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const payload = req.body;
   const validatedValue = validateRequest(userSchema, payload);
@@ -20,10 +21,24 @@ export const userStepsOne = (
   }
 };
 
+export const verifyOtpValidation = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const payload = req.body;
+  const validatedValue = validateRequest(verifyOTPSchema, payload);
+
+  if (validatedValue) {
+    req.value = validatedValue;
+    next();
+  }
+};
+
 export const userStepTwo = (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const payload = req.body;
   const validatedValue = validateRequest(userStepTwoSchema, payload);
@@ -37,7 +52,7 @@ export const userStepTwo = (
 export const loginValidate = (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const payload = req.body;
   const validatedValue = validateRequest(userSchema, payload);

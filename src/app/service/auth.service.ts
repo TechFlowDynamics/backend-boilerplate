@@ -1,9 +1,9 @@
 import {
   checkUser,
-  createUser,
   findUser,
-  getUser,
+  getSingleUser,
   updateUser,
+  upsertUser,
 } from "../../data/dal/user.dal";
 import { CustomError } from "../../core/handlers/error.handlers";
 import { ResponseMessages } from "../../core/constants/cloud.constants";
@@ -30,42 +30,56 @@ import { createRefresehToken } from "../../data/dal/token.dal";
 import mongoose from "mongoose";
 
 export const signupServiceOne = async (
-  data: IncommingUserBody,
+  data: IncommingUserBody
 ): Promise<OutGoingUserBody> => {
-  // check if username already exists
-  const isUserExist = await checkUser({
-    $or: [
-      {
-        userName: data.userName,
-      },
-      {
-        email: data.email,
-      },
-    ],
+  const userData = await getSingleUser({
+    email: data.email,
   });
-  if (isUserExist) {
-    throw new CustomError(
-      ResponseMessages.RES_MSG_USER_EMAIL_ALREADY_EXISTS_EN,
-      "400",
-    );
+
+  let userComeUp = false;
+
+  if (userData) {
+    userComeUp = true;
+    if (userData.emailVerified) {
+      throw new CustomError(
+        ResponseMessages.RES_MSG_USER_EMAIL_ALREADY_EXISTS_EN,
+        "400"
+      );
+    }
   }
   data.password = await generateHash(data.password);
   data.steps = 1;
-  const create = await createUser(data);
+  let email = data.email as string;
+  delete data.email;
+  const create = await upsertUser(
+    {
+      email: email,
+    },
+    data
+  );
 
   const response: OutGoingUserBody = {
-    userId: create.userId,
+    userId: create._id as mongoose.Types.ObjectId,
     userName: create.userName,
     purpose: Purpose.SIGNUP,
     steps: 1,
-    email: create.email,
+    userComeUp: true,
+    email: create.email as string,
   };
 
   return response;
 };
 
+export const checkUserName = async (
+  data: IncommingUserBody
+): Promise<Boolean> => {
+  const isUserExist = await checkUser({ userName: data.userName });
+  if (!isUserExist) return false;
+  return true;
+};
+
 export const otpVerify = async (
-  data: OtpFilterInterface,
+  data: OtpFilterInterface
 ): Promise<UserLoginOutputInterface> => {
   if (data.purpose === Purpose.FORGET_PASSWORD) {
     const response = await findOtp(data);
@@ -81,7 +95,7 @@ export const otpVerify = async (
     const verifiedUser = await verifyOTP(data);
     const response = await updateUser(
       { email: verifiedUser.email },
-      { emailVerified: true },
+      { emailVerified: true }
     );
 
     const token = generateAccessToken(response);
@@ -103,7 +117,7 @@ export const otpVerify = async (
 
 export const signupServiceTwo = async (
   userId: mongoose.Types.ObjectId,
-  body: IncommingUserStepTwo,
+  body: IncommingUserStepTwo
 ): Promise<UserOuput> => {
   const isUserExist = await checkUser({
     _id: userId,
@@ -115,7 +129,6 @@ export const signupServiceTwo = async (
 
   const response: UserOuput = {
     steps: data.steps,
-    userId: data.userId,
     userName: data.userName,
     profilePhoto: data.profilePhoto,
     isCompleted: data.isCompleted,
@@ -128,12 +141,12 @@ export const loginService = async (body: LoginUserIncommingInterface) => {
 
   const isMatch = await compareHash(
     String(body.password),
-    String(data.password),
+    String(data.password)
   );
   if (!isMatch) {
     throw new CustomError(
       "Invalid Credentials ",
-      ResponseMessages.RES_MSG_INVALID_PASSWORD,
+      ResponseMessages.RES_MSG_INVALID_PASSWORD
     );
   }
   const accessToken = generateAccessToken(data);

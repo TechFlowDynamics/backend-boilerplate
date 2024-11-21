@@ -14,7 +14,7 @@ const bucketName = config.S3_PUBLIC_BUCKET_NAME ?? "infinite-green-website";
 export const generateS3UploadUrlMiddleware = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const { fileName, mimeType } = req.body;
 
@@ -26,7 +26,7 @@ export const generateS3UploadUrlMiddleware = async (
   const timestamp = Date.now();
   const fileExtension = fileName.split(".").pop();
 
-  const s3FileName = `plants/${timestamp}-infinite-green.${fileExtension}`;
+  const s3FileName = `plants/${timestamp}-codie-buddy-green.${fileExtension}`;
 
   const params: AWS.S3.PresignedPost.Params = {
     Bucket: bucketName,
@@ -45,9 +45,8 @@ export const generateS3UploadUrlMiddleware = async (
 
   try {
     const presignedData: PresignedPost = s3.createPresignedPost(params);
-
-    req.userData.presignedData = presignedData;
-    next();
+    return presignedData;
+    // next();
   } catch (error) {
     console.error("Error generating presigned URL:", error);
     res.status(500).json({ error: "Failed to generate presigned URL" });

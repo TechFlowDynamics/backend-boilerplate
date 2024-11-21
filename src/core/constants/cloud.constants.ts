@@ -126,6 +126,7 @@ export const ResponseMessages = Object.freeze({
   RES_MSG_USER_LOGIN_SUCCESSFULLY_EN: "User login successfully.",
 
   RES_MSG_USER_EMAIL_ALREADY_EXISTS_EN: "User email is already exists.",
+  RES_MSG_USERNAME_ALREADY_EXISTS_EN: "Username is already exists.",
 
   RES_MSG_USER_NUMBER_ALREADY_EXISTS_EN: "User phone number is already exists.",
 

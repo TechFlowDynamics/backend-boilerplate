@@ -8,11 +8,12 @@ import {
 import { decodeUserToken, generateAccessToken } from "../../core/utils/util";
 import { responseHandler } from "../../core/handlers/response.handlers";
 import { getUser } from "../../data/dal/user.dal";
+import mongoose from "mongoose";
 
 export const createAccessToken = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   try {
     const token: string | undefined = req
@@ -21,7 +22,7 @@ export const createAccessToken = async (
     if (!token) {
       throw new CustomError(
         "Invalid token !!",
-        ResponseMessages.RES_MSG_INVALID_TOKEN_EN,
+        ResponseMessages.RES_MSG_INVALID_TOKEN_EN
       );
     }
     const decodeUser = decodeUserToken(token);
@@ -30,10 +31,12 @@ export const createAccessToken = async (
         res,
         null,
         201,
-        ResponseMessages.RES_MSG_INVALID_TOKEN_EN,
+        ResponseMessages.RES_MSG_INVALID_TOKEN_EN
       );
     }
-    const data = await getUser({ _id: decodeUser.userId });
+    const data = await getUser({
+      _id: decodeUser.userId as mongoose.Types.ObjectId,
+    });
     const accessToken = generateAccessToken(data.data);
     const response: any = {
       data: {
@@ -46,7 +49,7 @@ export const createAccessToken = async (
       res,
       response,
       200,
-      ResponseMessages.ACCESS_TOKEN_CREATED_SUCCESSFULLY_EN,
+      ResponseMessages.ACCESS_TOKEN_CREATED_SUCCESSFULLY_EN
     );
   } catch (error) {
     const code = getErrorCode(error) as number;

@@ -11,7 +11,7 @@ import {
 export const verifyToken = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   try {
     const token: string | undefined = req
@@ -20,7 +20,7 @@ export const verifyToken = async (
     if (!token) {
       throw new CustomError(
         "Invalid token ",
-        ResponseMessages.RES_MSG_INVALID_TOKEN_EN,
+        ResponseMessages.RES_MSG_INVALID_TOKEN_EN
       );
     }
 
@@ -31,7 +31,7 @@ export const verifyToken = async (
         res,
         null,
         401,
-        ResponseMessages.RES_MSG_INVALID_TOKEN_EN,
+        ResponseMessages.RES_MSG_INVALID_TOKEN_EN
       );
     }
     next();
@@ -39,5 +39,24 @@ export const verifyToken = async (
     const code = getErrorCode(error) as number;
     const message = getErrorMessage(error);
     return responseHandler(res, null, code, message);
+  }
+};
+
+export const isVerifiedUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userData = req.userData;
+    if (userData?.emailVerified && userData.isCompleted) {
+      next();
+    }
+    throw new CustomError(
+      ResponseMessages.RES_MSG_UNAUTHORIZED_ADMIN_EN,
+      "403"
+    );
+  } catch (error) {
+    next(error);
   }
 };

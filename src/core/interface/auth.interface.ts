@@ -17,16 +17,18 @@ export interface OutGoingUserBody {
   userId: Types.ObjectId;
   steps: number;
   email: string;
+  userComeUp?: boolean;
   purpose?: string;
 }
 
 export interface UserIncomingDetails {
   $or?: Array<object>;
   _id?: mongoose.Types.ObjectId | string | undefined;
-  userId?: mongoose.Types.ObjectId;
+  userId: mongoose.Types.ObjectId;
   phoneNumber?: string;
   email?: string;
   userName?: string;
+  isCompleted?: boolean;
   phoneVerified?: boolean;
   emailVerified?: boolean;
 }
@@ -125,8 +127,9 @@ export interface UserOuput {
   phoneNumber?: string;
   userName: string;
   steps?: number;
-  profilePhoto?: string;
   isCompleted?: boolean;
+  emailVerified?: boolean;
+  profilePhoto?: string;
 }
 
 export interface IncommingUserStepTwo {
