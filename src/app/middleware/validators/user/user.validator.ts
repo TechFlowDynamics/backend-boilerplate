@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { getUserValidationFunc } from "src/data/validators/functions/userValidation.function";
+import { getUserValidationFunc } from "../../../../data/validators/functions/userValidation.function";
 
 export const getUserValidation = (
   req: Request,

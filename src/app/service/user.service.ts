@@ -1,11 +1,10 @@
 import {
   CheckUserInterface,
-  IncommingUserBody,
-} from "src/core/interface/auth.interface";
+} from "../../core/interface/auth.interface";
 import { checkUser, getSingleUser } from "../../data/dal/user.dal";
-import { IUser } from "src/core/interface/user.interface";
-import { CustomError } from "src/core/handlers/error.handlers";
-import { ResponseMessages } from "src/core/constants/cloud.constants";
+import { IUser } from "../../core/interface/user.interface";
+import { CustomError } from "../../core/handlers/error.handlers";
+import { ResponseMessages } from "../../core/constants/cloud.constants";
 
 export const checkUserName = async (
   data: CheckUserInterface

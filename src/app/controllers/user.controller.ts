@@ -1,8 +1,8 @@
 import { Response, Request, NextFunction } from "express";
 import { ResponseMessages } from "../../core/constants/cloud.constants";
 import userService from "../service/user.service";
-import { responseHandler } from "src/core/handlers/response.handlers";
-import { CustomError } from "src/core/handlers/error.handlers";
+import { responseHandler } from "../../core/handlers/response.handlers";
+import { CustomError } from "../../core/handlers/error.handlers";
 
 export const checkUserName = async (
   req: Request,

@@ -2,18 +2,15 @@ import mongoose from "mongoose";
 import {
   CheckUserInterface,
   IncommingUserBody,
-  LoginUserOuputInterface,
   OutGoingUserBody,
   UpdateUserInterface,
-  UserIncomingDetails,
-  UserOuput,
   UserSignupOutput,
 } from "../../core/interface/auth.interface";
 import { userModel } from "../models/index";
 import dal from "./index";
 import { CustomError } from "../../core/handlers/error.handlers";
 import { ResponseMessages } from "../../core/constants/cloud.constants";
-import { IUser } from "src/core/interface/user.interface";
+import { IUser } from "../../core/interface/user.interface";
 
 export const createUser = async (
   body: IncommingUserBody
