@@ -21,7 +21,7 @@ import {
   LoginUserIncommingInterface,
   OtpFilterInterface,
   OutGoingUserBody,
-  OutGoingUserStepTwo,
+  UpdateUserInterface,
   UserLoginOutputInterface,
   UserOuput,
 } from "../../core/interface/auth.interface";
@@ -63,7 +63,7 @@ export const signupServiceOne = async (
     userName: create.userName,
     purpose: Purpose.SIGNUP,
     steps: 1,
-    userComeUp: true,
+    userComeUp: userComeUp,
     email: create.email as string,
   };
 
@@ -102,7 +102,7 @@ export const otpVerify = async (
     const refreshToken = generateRefreshToken(response);
     const hashRefresh = await generateHash(refreshToken);
     await createRefresehToken({
-      userId: String(response.userId),
+      userId: String(response._id),
       refreshToken: refreshToken,
       hash: hashRefresh,
     });
@@ -117,21 +117,41 @@ export const otpVerify = async (
 
 export const signupServiceTwo = async (
   userId: mongoose.Types.ObjectId,
-  body: IncommingUserStepTwo
-): Promise<UserOuput> => {
+  body: UpdateUserInterface
+) => {
   const isUserExist = await checkUser({
     _id: userId,
   });
   if (!isUserExist) {
     throw new CustomError(ResponseMessages.RES_MSG_USER_NOT_FOUND_EN, "400");
   }
+  body.emailVerified = true;
+  body.isCompleted = true;
   const data = await updateUser({ _id: userId }, body);
 
-  const response: UserOuput = {
-    steps: data.steps,
+  const accessTokenBody = {
+    userId: data._id,
     userName: data.userName,
-    profilePhoto: data.profilePhoto,
+    email: data.email,
     isCompleted: data.isCompleted,
+    emailVerified: data.emailVerified,
+  };
+  const accessToken = generateAccessToken(accessTokenBody);
+  const refreshTokenBody = {
+    userId: data._id,
+  };
+  const refreshToken = generateRefreshToken(refreshTokenBody);
+  const response = {
+    data: {
+      userId: data._id,
+      userName: data.userName,
+      email: data.email,
+      isCompleted: data.isCompleted,
+      emailVerified: data.emailVerified,
+      steps: data.steps,
+    },
+    accessToken: accessToken,
+    refreshToken: refreshToken,
   };
   return response;
 };
@@ -139,6 +159,9 @@ export const signupServiceTwo = async (
 export const loginService = async (body: LoginUserIncommingInterface) => {
   const data = await findUser({ email: body.email as string });
 
+  if (data.emailVerified) {
+    throw new CustomError(ResponseMessages.RES_MSG_USER_NOT_VERIFIED_EN, "400");
+  }
   const isMatch = await compareHash(
     String(body.password),
     String(data.password)
@@ -149,12 +172,27 @@ export const loginService = async (body: LoginUserIncommingInterface) => {
       ResponseMessages.RES_MSG_INVALID_PASSWORD
     );
   }
-  const accessToken = generateAccessToken(data);
-  const refreshToken = generateRefreshToken(data);
+  const accessTokenBody = {
+    userId: data._id,
+    userName: data.userName,
+    email: data.email,
+    isCompleted: data.isCompleted,
+    emailVerified: data.emailVerified,
+  };
+
+  const accessToken = generateAccessToken(accessTokenBody);
+  const refreshTokenBody = {
+    userId: data._id,
+  };
+  const refreshToken = generateRefreshToken(refreshTokenBody);
   const response = {
     data: {
-      userId: data.userId,
+      userId: data._id,
       userName: data.userName,
+      email: data.email,
+      isCompleted: data.isCompleted,
+      emailVerified: data.emailVerified,
+      steps: data.steps,
     },
     accessToken: accessToken,
     refreshToken: refreshToken,

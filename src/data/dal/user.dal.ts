@@ -66,7 +66,7 @@ export const getSingleUser = async (
 export const updateUser = async (
   filter: CheckUserInterface,
   body: UpdateUserInterface
-): Promise<UserOuput> => {
+): Promise<IUser> => {
   const data = await userModel.findOneAndUpdate(
     filter,
     { ...body },
@@ -81,19 +81,10 @@ export const updateUser = async (
       ResponseMessages.RES_MSG_USER_NOT_FOUND_EN
     );
   }
-  const reponse: UserOuput = {
-    userId: data?._id as mongoose.Types.ObjectId,
-    userName: data?.userName as string,
-    steps: data.steps as number,
-    isCompleted: data.isCompleted,
-    emailVerified: data.emailVerified,
-  };
-  return reponse;
+  return data;
 };
 
-export const findUser = async (
-  filter: CheckUserInterface
-): Promise<LoginUserOuputInterface> => {
+export const findUser = async (filter: CheckUserInterface): Promise<IUser> => {
   const data = await userModel.findOne({ ...filter });
   if (!data) {
     throw new CustomError(
@@ -101,12 +92,7 @@ export const findUser = async (
       ResponseMessages.RES_MSG_USER_NOT_FOUND_EN
     );
   }
-  const response: LoginUserOuputInterface = {
-    userName: data?.userName,
-    userId: data?._id as string,
-    password: data.password,
-  };
-  return response;
+  return data;
 };
 
 export const upsertUser = async (

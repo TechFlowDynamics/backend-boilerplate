@@ -1,20 +1,9 @@
 import AWS from "aws-sdk";
 import { PresignedPost } from "aws-sdk/clients/s3";
 import config from "../../config";
+import { s3 } from "../scripts/aws.scripts";
 
 const bucketName = config.S3_PUBLIC_BUCKET_NAME || "infinite-green-website";
-
-AWS.config.update({
-  region: config.AWS_SES_REGION,
-  accessKeyId: config.ACCESS_KEY_ID,
-  secretAccessKey: config.SECRET_ACCESS_KEY,
-});
-
-const s3 = new AWS.S3({
-  accessKeyId: config.ACCESS_KEY_ID,
-  secretAccessKey: config.SECRET_ACCESS_KEY,
-  region: config.AWS_REGION,
-});
 
 export const generatePublicS3FileUrl = async (fileName: string) => {
   try {

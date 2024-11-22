@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import { Response, Request, NextFunction } from "express";
 import { ResponseMessages } from "../../core/constants/cloud.constants";
 import userService from "../service/user.service";

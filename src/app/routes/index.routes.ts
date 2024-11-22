@@ -1,26 +1,32 @@
 // routes.js
 
 import express, { NextFunction, Request, Response } from "express";
-import authRouter from "./auth.routes";
 import { ResponseMessages } from "../../core/constants/cloud.constants";
 import { NotFound } from "../middleware/errors";
 import { errorHandler } from "../middleware/errors/errorHandler.middleware";
+
+import authRouter from "./auth.routes";
+import userRouter from "./user.routes";
+import uploadRouter from "./upload.routes";
+
 const router = express.Router();
 
 router.use("/auth", authRouter);
+router.use("/user", userRouter);
+router.use("/upload", uploadRouter);
 
 router.get(
   "/hello-world",
   async (req: Request, res: Response, next: NextFunction) => {
     return res.status(200).json({ data: "Hello from backend" });
-  },
+  }
 );
 
 router.use((req: Request, res: Response, next: NextFunction) => {
   next(
     new NotFound(
-      `${ResponseMessages.RES_MSG_NOT_FOUND_URL_EN}: ${req.originalUrl}`,
-    ),
+      `${ResponseMessages.RES_MSG_NOT_FOUND_URL_EN}: ${req.originalUrl}`
+    )
   );
 });
 

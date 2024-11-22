@@ -13,4 +13,10 @@ const ses = new AWS.SES({
   secretAccessKey: config.AWS_SES_SECRET_ACCESS_KEY,
 });
 
-export { sns, ses };
+const s3 = new AWS.S3({
+  region: config.AWS_REGION,
+  accessKeyId: config.ACCESS_KEY_ID,
+  secretAccessKey: config.SECRET_ACCESS_KEY,
+});
+
+export { sns, ses, s3 };

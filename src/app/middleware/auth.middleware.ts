@@ -49,13 +49,51 @@ export const isVerifiedUser = async (
 ) => {
   try {
     const userData = req.userData;
-    if (userData?.emailVerified && userData.isCompleted) {
+    if (userData?.emailVerified) {
       next();
     }
     throw new CustomError(
       ResponseMessages.RES_MSG_UNAUTHORIZED_ADMIN_EN,
       "403"
     );
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const verifiedToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const token: string | undefined = req
+      .header("access-token")
+      ?.replace("Bearer", "");
+    if (!token) {
+      throw new CustomError(
+        "Invalid token ",
+        ResponseMessages.RES_MSG_INVALID_TOKEN_EN
+      );
+    }
+
+    const data: UserIncomingDetails = decodeUserToken(token);
+    if (!data) {
+      responseHandler(
+        res,
+        null,
+        401,
+        ResponseMessages.RES_MSG_INVALID_TOKEN_EN
+      );
+    }
+    if (data.emailVerified && data.isCompleted) {
+      next();
+    } else {
+      throw new CustomError(
+        ResponseMessages.RES_MSG_USER_NOT_VERIFIED_EN,
+        "401"
+      );
+    }
   } catch (error) {
     next(error);
   }
