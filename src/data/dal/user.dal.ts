@@ -13,7 +13,7 @@ import { ResponseMessages } from "../../core/constants/cloud.constants";
 import { IUser } from "../../core/interface/user.interface";
 
 export const createUser = async (
-  body: IncommingUserBody
+  body: IncommingUserBody,
 ): Promise<OutGoingUserBody> => {
   try {
     const data = await dal.create(userModel, body);
@@ -31,7 +31,7 @@ export const createUser = async (
 };
 
 export const checkUser = async (
-  filter: CheckUserInterface
+  filter: CheckUserInterface,
 ): Promise<boolean> => {
   const data = await dal.findOne(userModel, filter);
   if (!data) {
@@ -41,7 +41,7 @@ export const checkUser = async (
 };
 
 export const getUser = async (
-  filter: CheckUserInterface
+  filter: CheckUserInterface,
 ): Promise<UserSignupOutput> => {
   const data = await dal.findOne(userModel, filter);
   const response: UserSignupOutput = {
@@ -54,7 +54,7 @@ export const getUser = async (
   return response;
 };
 export const getSingleUser = async (
-  filter: CheckUserInterface
+  filter: CheckUserInterface,
 ): Promise<IUser | null> => {
   const data = await dal.findOne(userModel, filter);
   if (!data) return null;
@@ -62,7 +62,7 @@ export const getSingleUser = async (
 };
 export const updateUser = async (
   filter: CheckUserInterface,
-  body: UpdateUserInterface
+  body: UpdateUserInterface,
 ): Promise<IUser> => {
   const data = await userModel.findOneAndUpdate(
     filter,
@@ -70,12 +70,12 @@ export const updateUser = async (
     {
       new: true,
       useFindAndModify: false,
-    }
+    },
   );
   if (!data) {
     throw new CustomError(
       "User Not found",
-      ResponseMessages.RES_MSG_USER_NOT_FOUND_EN
+      ResponseMessages.RES_MSG_USER_NOT_FOUND_EN,
     );
   }
   return data;
@@ -86,7 +86,7 @@ export const findUser = async (filter: CheckUserInterface): Promise<IUser> => {
   if (!data) {
     throw new CustomError(
       "User Not present, Please register",
-      ResponseMessages.RES_MSG_USER_NOT_FOUND_EN
+      ResponseMessages.RES_MSG_USER_NOT_FOUND_EN,
     );
   }
   return data;
@@ -94,13 +94,13 @@ export const findUser = async (filter: CheckUserInterface): Promise<IUser> => {
 
 export const upsertUser = async (
   filter: CheckUserInterface,
-  body: UpdateUserInterface
+  body: UpdateUserInterface,
 ): Promise<IUser> => {
   const data = await dal.findOneAndUpsert(userModel, filter, { ...body });
   if (!data) {
     throw new CustomError(
       "User Not found",
-      ResponseMessages.RES_MSG_USER_NOT_FOUND_EN
+      ResponseMessages.RES_MSG_USER_NOT_FOUND_EN,
     );
   }
 

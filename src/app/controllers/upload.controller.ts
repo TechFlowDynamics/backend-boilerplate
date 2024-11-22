@@ -3,14 +3,18 @@ import { ResponseMessages } from "../../core/constants/cloud.constants";
 import { responseHandler } from "../../core/handlers/response.handlers";
 import { uploadGeneralFile } from "../service/upload.service";
 
-export const uploadFile = async (req: Request, res: Response, next: NextFunction) => {
+export const uploadFile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     if (!req.file) {
       return responseHandler(
         res,
         null,
         400,
-        'Please provide "filename" in query!'
+        'Please provide "filename" in query!',
       );
     }
     const buffer = req.file.buffer;

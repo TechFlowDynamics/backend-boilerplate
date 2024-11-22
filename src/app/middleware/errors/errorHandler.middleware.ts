@@ -23,14 +23,14 @@ export const errorHandler = (
   err: any,
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   // Log the error
   customLogger.error(`Error handler ${err.message || "Unknown error"}`);
 
   // Handle Joi validation errors
   if (err instanceof JoiValidationError) {
-    const messages = err.message
+    const messages = err.message;
     const data = {
       status: "error",
       statusCode: err.getCode(),
@@ -77,7 +77,7 @@ export const errorHandler = (
 
   // Handle Mongoose validation errors
   if (err instanceof mongoose.Error.ValidationError) {
-    const messages = Object.values(err.errors).map((error) => error.message);
+    const messages = Object.values(err.errors).map(error => error.message);
     const data = {
       status: "error",
       statusCode: 400,

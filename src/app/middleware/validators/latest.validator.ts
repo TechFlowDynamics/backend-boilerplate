@@ -10,7 +10,7 @@ import { validateRequest } from "../../../core/utils/validateRequest.utils";
 export const userStepsOne = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const payload = req.body;
   const validatedValue = validateRequest(userSchema, payload);
@@ -24,7 +24,7 @@ export const userStepsOne = (
 export const verifyOtpValidation = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const payload = req.body;
   const validatedValue = validateRequest(verifyOTPSchema, payload);
@@ -38,7 +38,7 @@ export const verifyOtpValidation = (
 export const userStepTwo = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const payload = req.body;
   const validatedValue = validateRequest(userStepTwoSchema, payload);
@@ -52,7 +52,7 @@ export const userStepTwo = (
 export const loginValidate = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const payload = req.body;
   const validatedValue = validateRequest(userSchema, payload);

@@ -23,7 +23,7 @@ import mongoose from "mongoose";
 export const registerOne = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const body = req.value;
@@ -31,7 +31,7 @@ export const registerOne = async (
     if (userNameExist) {
       throw new CustomError(
         ResponseMessages.RES_MSG_USERNAME_ALREADY_EXISTS_EN,
-        "400"
+        "400",
       );
     }
     const data = await signupServiceOne(body);
@@ -53,7 +53,7 @@ export const registerOne = async (
       res,
       { data },
       200,
-      ResponseMessages.RES_MSG_USER_CREATED_SUCCESSFULLY_EN
+      ResponseMessages.RES_MSG_USER_CREATED_SUCCESSFULLY_EN,
     );
 
     next();
@@ -66,7 +66,7 @@ export const registerOne = async (
 export const verifyOTP = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const body = req.value;
@@ -80,7 +80,7 @@ export const verifyOTP = async (
 export const registerTwo = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const body = req.value;
@@ -91,7 +91,7 @@ export const registerTwo = async (
       res,
       { data },
       200,
-      ResponseMessages.RES_MSG_USER_CREATED_SUCCESSFULLY_EN
+      ResponseMessages.RES_MSG_USER_CREATED_SUCCESSFULLY_EN,
     );
   } catch (error) {
     console.log("🚀 ~ error:", error);
@@ -112,7 +112,7 @@ export const registerTwo = async (
 export const login = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const body = req.value;
@@ -121,7 +121,7 @@ export const login = async (
       res,
       data,
       200,
-      ResponseMessages.RES_MSG_USER_LOGIN_SUCCESSFULLY_EN
+      ResponseMessages.RES_MSG_USER_LOGIN_SUCCESSFULLY_EN,
     );
   } catch (error) {
     const errorMongoose = errorHandlerMiddleware(error, res);

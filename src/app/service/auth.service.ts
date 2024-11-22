@@ -30,7 +30,7 @@ import { createRefresehToken } from "../../data/dal/token.dal";
 import mongoose from "mongoose";
 
 export const signupServiceOne = async (
-  data: IncommingUserBody
+  data: IncommingUserBody,
 ): Promise<OutGoingUserBody> => {
   const userData = await getSingleUser({
     email: data.email,
@@ -43,7 +43,7 @@ export const signupServiceOne = async (
     if (userData.emailVerified) {
       throw new CustomError(
         ResponseMessages.RES_MSG_USER_EMAIL_ALREADY_EXISTS_EN,
-        "400"
+        "400",
       );
     }
   }
@@ -55,7 +55,7 @@ export const signupServiceOne = async (
     {
       email: email,
     },
-    data
+    data,
   );
 
   const response: OutGoingUserBody = {
@@ -71,7 +71,7 @@ export const signupServiceOne = async (
 };
 
 export const checkUserName = async (
-  data: IncommingUserBody
+  data: IncommingUserBody,
 ): Promise<Boolean> => {
   const isUserExist = await checkUser({ userName: data.userName });
   if (!isUserExist) return false;
@@ -79,7 +79,7 @@ export const checkUserName = async (
 };
 
 export const otpVerify = async (
-  data: OtpFilterInterface
+  data: OtpFilterInterface,
 ): Promise<UserLoginOutputInterface> => {
   if (data.purpose === Purpose.FORGET_PASSWORD) {
     const response = await findOtp(data);
@@ -95,7 +95,7 @@ export const otpVerify = async (
     const verifiedUser = await verifyOTP(data);
     const response = await updateUser(
       { email: verifiedUser.email },
-      { emailVerified: true }
+      { emailVerified: true },
     );
 
     const token = generateAccessToken(response);
@@ -117,7 +117,7 @@ export const otpVerify = async (
 
 export const signupServiceTwo = async (
   userId: mongoose.Types.ObjectId,
-  body: UpdateUserInterface
+  body: UpdateUserInterface,
 ) => {
   const isUserExist = await checkUser({
     _id: userId,
@@ -164,12 +164,12 @@ export const loginService = async (body: LoginUserIncommingInterface) => {
   }
   const isMatch = await compareHash(
     String(body.password),
-    String(data.password)
+    String(data.password),
   );
   if (!isMatch) {
     throw new CustomError(
       "Invalid Credentials ",
-      ResponseMessages.RES_MSG_INVALID_PASSWORD
+      ResponseMessages.RES_MSG_INVALID_PASSWORD,
     );
   }
   const accessTokenBody = {

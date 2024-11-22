@@ -4,7 +4,7 @@ import { getUserValidationFunc } from "../../../../data/validators/functions/use
 export const getUserValidation = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const payload = req.query;
   const validatedValue = getUserValidationFunc(payload);

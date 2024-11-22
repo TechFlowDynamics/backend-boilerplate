@@ -7,7 +7,7 @@ import { CustomError } from "../../core/handlers/error.handlers";
 export const checkUserName = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const body = req.value;
@@ -25,7 +25,7 @@ export const checkUserName = async (
 export const getUser = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const body = req.userData;

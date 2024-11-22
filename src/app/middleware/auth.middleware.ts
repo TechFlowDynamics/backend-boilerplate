@@ -11,7 +11,7 @@ import {
 export const verifyToken = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const token: string | undefined = req
@@ -20,7 +20,7 @@ export const verifyToken = async (
     if (!token) {
       throw new CustomError(
         "Invalid token ",
-        ResponseMessages.RES_MSG_INVALID_TOKEN_EN
+        ResponseMessages.RES_MSG_INVALID_TOKEN_EN,
       );
     }
 
@@ -31,7 +31,7 @@ export const verifyToken = async (
         res,
         null,
         401,
-        ResponseMessages.RES_MSG_INVALID_TOKEN_EN
+        ResponseMessages.RES_MSG_INVALID_TOKEN_EN,
       );
     }
     next();
@@ -45,7 +45,7 @@ export const verifyToken = async (
 export const isVerifiedUser = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const userData = req.userData;
@@ -54,7 +54,7 @@ export const isVerifiedUser = async (
     }
     throw new CustomError(
       ResponseMessages.RES_MSG_UNAUTHORIZED_ADMIN_EN,
-      "403"
+      "403",
     );
   } catch (error) {
     next(error);
@@ -64,7 +64,7 @@ export const isVerifiedUser = async (
 export const verifiedToken = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const token: string | undefined = req
@@ -73,7 +73,7 @@ export const verifiedToken = async (
     if (!token) {
       throw new CustomError(
         "Invalid token ",
-        ResponseMessages.RES_MSG_INVALID_TOKEN_EN
+        ResponseMessages.RES_MSG_INVALID_TOKEN_EN,
       );
     }
 
@@ -83,7 +83,7 @@ export const verifiedToken = async (
         res,
         null,
         401,
-        ResponseMessages.RES_MSG_INVALID_TOKEN_EN
+        ResponseMessages.RES_MSG_INVALID_TOKEN_EN,
       );
     }
     if (data.emailVerified && data.isCompleted) {
@@ -91,7 +91,7 @@ export const verifiedToken = async (
     } else {
       throw new CustomError(
         ResponseMessages.RES_MSG_USER_NOT_VERIFIED_EN,
-        "401"
+        "401",
       );
     }
   } catch (error) {

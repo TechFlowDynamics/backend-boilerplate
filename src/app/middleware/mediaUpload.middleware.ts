@@ -14,7 +14,7 @@ const bucketName = config.S3_PUBLIC_BUCKET_NAME ?? "infinite-green-website";
 export const generateS3UploadUrlMiddleware = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const { fileName, mimeType } = req.body;
 

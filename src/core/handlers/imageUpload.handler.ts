@@ -29,9 +29,8 @@ export const generatePublicS3FileUrl = async (fileName: string) => {
       ],
     };
 
-    const presignedPostData: PresignedPost = s3.createPresignedPost(
-      inputParams
-    );
+    const presignedPostData: PresignedPost =
+      s3.createPresignedPost(inputParams);
 
     return presignedPostData;
   } catch (error) {
@@ -41,12 +40,12 @@ export const generatePublicS3FileUrl = async (fileName: string) => {
 
 export const uploadGeneralFile = async (
   buffer: Buffer,
-  fileName: string
+  fileName: string,
 ): Promise<string> => {
   const fileExtension = fileName.split(".").pop();
   const timestamp = Date.now();
   const file_name = `kisna/export/${timestamp}-kisna-${Math.floor(
-    Math.random() * 100 + 1
+    Math.random() * 100 + 1,
   )}.${fileExtension}`;
 
   const params: AWS.S3.PutObjectRequest = {
