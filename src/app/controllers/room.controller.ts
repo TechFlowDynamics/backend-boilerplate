@@ -1,49 +1,37 @@
 import { NextFunction, Request, Response } from "express";
-import bcrypt from "bcrypt";
-import jwt, { JwtPayload } from "jsonwebtoken";
-import RoomModel from "../../data/models/room.model";
 
-const generateRoomCode = (): string => {
-  return Math.random().toString(36).substring(2, 8).toUpperCase();
-};
+import {
+  createRoomService,
+  getPublicRoomsService,
+  joinRoomService,
+} from "../service/room.service";
 
-// Create a new room
+// Controller: Handles the request and response
 export const createRoom = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const { roomName, questionId, status, startTime, endTime } = req.body;
-    const token = req.header("access-token")?.replace("Bearer ", ""); // Extract token from header
+    const { roomName, questionIds, status, startTime, endTime } = req.body;
 
-    // Validate token
-    if (!token) {
-      res.status(401).json({ message: "Authorization token is missing" });
-      return;
-    }
-
-    let decodedToken: JwtPayload | string;
-    try {
-      decodedToken = jwt.verify(token, process.env.JWT_SECRET || "secret");
-      console.log("decodedToken", decodedToken);
-    } catch (error) {
-      res.status(401).json({ message: "Invalid or expired token" });
-      return;
-    }
-
-    const roomOwner = (decodedToken as JwtPayload)?.userId;
-    console.log("roomOwner", roomOwner);
-    if (!roomOwner) {
-      res
-        .status(401)
-        .json({ message: "Invalid token payload: user ID is missing" });
+    // Validate and ensure userId is a string
+    const userId = req.userData?.userId?.toString();
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized: Missing user ID" });
       return;
     }
 
     // Validate input fields
-    if (!roomName || !questionId || !status || !startTime || !endTime) {
+    if (!roomName || !questionIds || !status || !startTime || !endTime) {
       res.status(400).json({ message: "Missing required fields" });
+      return;
+    }
+
+    if (!Array.isArray(questionIds) || questionIds.length === 0) {
+      res
+        .status(400)
+        .json({ message: "questionIds must be a non-empty array" });
       return;
     }
 
@@ -54,65 +42,23 @@ export const createRoom = async (
       return;
     }
 
-    // Validate time fields
-    const start = new Date(startTime);
-    const end = new Date(endTime);
-
-    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-      res.status(400).json({ message: "Invalid startTime or endTime format" });
-      return;
-    }
-
-    if (end <= start) {
-      res.status(400).json({ message: "endTime must be later than startTime" });
-      return;
-    }
-
-    // Calculate the duration (in minutes)
-    const duration = Math.floor(
-      (end.getTime() - start.getTime()) / (1000 * 60),
-    );
-
-    // Ensure roomCode is unique
-    let roomCode = generateRoomCode();
-    while (await RoomModel.findOne({ roomCode })) {
-      roomCode = generateRoomCode();
-    }
-
-    // Generate a hashed room identifier
-    const saltRounds = 10;
-    const roomHash = await bcrypt.hash(
-      Math.random().toString(36).substring(2, 8).toUpperCase(),
-      saltRounds,
-    );
-
-    // Create the new room with the roomOwner as the first user
-    const newRoom = new RoomModel({
+    // Call the service
+    const roomData = await createRoomService({
       roomName,
-      roomCode,
-      roomHash,
-      users: [roomOwner],
-      questionId,
+      questionIds,
       status,
-      startTime: start,
-      endTime: end,
-      duration,
-      roomOwner,
+      startTime,
+      endTime,
+      userId, // Ensure it's passed as a string
     });
 
-    // Save the room to the database
-    const savedRoom = await newRoom.save();
-
-    // Respond with the saved room (omit sensitive data like roomHash)
-    const { roomHash: _, ...roomData } = savedRoom.toObject(); // Exclude roomHash from the response
-    res.status(201).json({ ...roomData });
+    res.status(201).json(roomData);
   } catch (error) {
     console.error("Error creating room:", error);
     next(error);
   }
 };
 
-// Join an existing room
 export const joinRoom = async (
   req: Request,
   res: Response,
@@ -120,82 +66,60 @@ export const joinRoom = async (
 ): Promise<void> => {
   try {
     const { roomCode } = req.body;
-    const token = req.header("access-token")?.replace("Bearer ", "");
+    const userId = req.userData?.userId.toString(); // Assuming middleware adds `userData` to `req`
 
-    if (!roomCode || !token) {
-      res.status(400).json({ message: "Missing required fields or token" });
+    if (!roomCode) {
+      res.status(400).json({ message: "Room code is required" });
       return;
     }
 
-    let decodedToken: JwtPayload | string;
-    try {
-      decodedToken = jwt.verify(token, process.env.JWT_SECRET || "secret");
-    } catch (error) {
-      res.status(401).json({ message: "Invalid or expired token" });
-      return;
-    }
-
-    const userId = (decodedToken as JwtPayload)?.userId;
     if (!userId) {
-      res
-        .status(401)
-        .json({ message: "Invalid token payload: user ID is missing" });
+      res.status(401).json({ message: "Unauthorized: User ID is missing" });
       return;
     }
 
-    // Find the room by roomCode
-    const room = await RoomModel.findOne({ roomCode });
+    // Call the service
+    const roomData = await joinRoomService(roomCode, userId);
 
-    if (!room) {
-      res.status(404).json({ message: "Room not found" });
-      return;
-    }
-
-    // Check if the current time is within the room's active duration
-    const currentTime = new Date();
-    if (currentTime < room.startTime || currentTime > room.endTime) {
-      res.status(403).json({ message: "Room is not active at this time" });
-      return;
-    }
-
-    // Check if the user is already in the room
-    if (room.users.includes(userId)) {
-      res.status(400).json({ message: "User already in the room" });
-      return;
-    }
-
-    // Add the user to the room's users array
-    room.users.push(userId);
-
-    // Save the updated room
-    await room.save();
-
-    // Respond with the updated room details
-    const { roomHash, ...roomData } = room.toObject();
-    res.status(200).json({ message: "User added to the room", room: roomData });
+    res.status(200).json({
+      message: "User successfully added to the room",
+      room: roomData,
+    });
   } catch (error) {
     console.error("Error joining room:", error);
     next(error);
   }
 };
 
-// Get all public rooms
+// Get all public rooms with pagination and latest created filter
 export const getPublicRooms = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const publicRooms = await RoomModel.find({ status: "public" });
+    const { page = 1, limit = 10 } = req.query;
 
-    if (!publicRooms || publicRooms.length === 0) {
-      res.status(404).json({ message: "No public rooms found" });
+    // Parse page and limit as integers
+    const pageNumber = parseInt(page as string, 10);
+    const limitNumber = parseInt(limit as string, 10);
+
+    if (isNaN(pageNumber) || pageNumber <= 0) {
+      res.status(400).json({ message: "Invalid page number" });
       return;
     }
 
+    if (isNaN(limitNumber) || limitNumber <= 0) {
+      res.status(400).json({ message: "Invalid limit value" });
+      return;
+    }
+
+    // Call the service
+    const publicRooms = await getPublicRoomsService(pageNumber, limitNumber);
+
     res.status(200).json({
       message: "Public rooms fetched successfully",
-      rooms: publicRooms,
+      ...publicRooms,
     });
   } catch (error) {
     console.error("Error fetching public rooms:", error);

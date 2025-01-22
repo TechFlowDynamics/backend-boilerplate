@@ -62,15 +62,17 @@ export const createRoomSchema = Joi.object({
     "string.max": "Room name must not exceed {#limit} characters.",
     "string.empty": "Room name is required.",
   }),
-  questionId: Joi.string().required().messages({
+questionIds: Joi.array().items(
+  Joi.string().required().messages({
     "string.empty": "Question ID is required.",
-  }),
+  })
+).required().messages({
+  "array.base": "Question IDs must be an array.",
+  "array.empty": "Question IDs are required.",
+}),
   status: Joi.string().valid("public", "private").required().messages({
     "any.only": "Status must be either 'public' or 'private'.",
     "string.empty": "Status is required.",
-  }),
-  roomOwner: Joi.string().required().messages({
-    "string.empty": "Room owner is required.",
   }),
   startTime: Joi.date().iso().required().messages({
     "date.format": "Start time must be in ISO format",
