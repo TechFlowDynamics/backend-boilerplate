@@ -1,12 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-
 import {
   createRoomService,
   getPublicRoomsService,
   joinRoomService,
 } from "../service/room.service";
 
-// Controller: Handles the request and response
 export const createRoom = async (
   req: Request,
   res: Response,
@@ -15,41 +13,39 @@ export const createRoom = async (
   try {
     const { roomName, questionIds, status, startTime, endTime } = req.body;
 
-    // Validate and ensure userId is a string
     const userId = req.userData?.userId?.toString();
     if (!userId) {
       res.status(401).json({ message: "Unauthorized: Missing user ID" });
       return;
     }
 
-    // Validate input fields
     if (!roomName || !questionIds || !status || !startTime || !endTime) {
       res.status(400).json({ message: "Missing required fields" });
       return;
     }
 
-    if (!Array.isArray(questionIds) || questionIds.length === 0) {
-      res
-        .status(400)
-        .json({ message: "questionIds must be a non-empty array" });
+    if (!questionIds || !Array.isArray(questionIds) || questionIds.length === 0) {
+      res.status(400).json({ message: "questionIds must be a non-empty array" });
       return;
     }
 
     if (!["public", "private"].includes(status)) {
-      res
-        .status(400)
-        .json({ message: "Status must be 'public' or 'private'." });
+      res.status(400).json({ message: "Status must be 'public' or 'private'." });
       return;
     }
 
-    // Call the service
+    if (isNaN(Date.parse(startTime)) || isNaN(Date.parse(endTime))) {
+      res.status(400).json({ message: "Invalid startTime or endTime format" });
+      return;
+    }
+
     const roomData = await createRoomService({
       roomName,
       questionIds,
       status,
       startTime,
       endTime,
-      userId, // Ensure it's passed as a string
+      userId,
     });
 
     res.status(201).json(roomData);
@@ -66,10 +62,10 @@ export const joinRoom = async (
 ): Promise<void> => {
   try {
     const { roomCode } = req.body;
-    const userId = req.userData?.userId.toString(); // Assuming middleware adds `userData` to `req`
+    const userId = req.userData?.userId.toString();
 
-    if (!roomCode) {
-      res.status(400).json({ message: "Room code is required" });
+    if (!roomCode || typeof roomCode !== 'string') {
+      res.status(400).json({ message: "Room code must be a string" });
       return;
     }
 
@@ -78,7 +74,6 @@ export const joinRoom = async (
       return;
     }
 
-    // Call the service
     const roomData = await joinRoomService(roomCode, userId);
 
     res.status(200).json({
@@ -91,7 +86,6 @@ export const joinRoom = async (
   }
 };
 
-// Get all public rooms with pagination and latest created filter
 export const getPublicRooms = async (
   req: Request,
   res: Response,
@@ -100,21 +94,14 @@ export const getPublicRooms = async (
   try {
     const { page = 1, limit = 10 } = req.query;
 
-    // Parse page and limit as integers
-    const pageNumber = parseInt(page as string, 10);
-    const limitNumber = parseInt(limit as string, 10);
+    const pageNumber = parseInt(page as string, 10) || 1;
+    const limitNumber = parseInt(limit as string, 10) || 10;
 
-    if (isNaN(pageNumber) || pageNumber <= 0) {
-      res.status(400).json({ message: "Invalid page number" });
+    if (pageNumber <= 0 || limitNumber <= 0) {
+      res.status(400).json({ message: "Page and limit must be positive integers" });
       return;
     }
 
-    if (isNaN(limitNumber) || limitNumber <= 0) {
-      res.status(400).json({ message: "Invalid limit value" });
-      return;
-    }
-
-    // Call the service
     const publicRooms = await getPublicRoomsService(pageNumber, limitNumber);
 
     res.status(200).json({

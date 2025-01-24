@@ -1,11 +1,10 @@
-import bcrypt from "bcrypt";
-import { createRoomDAL, findRoomByCodeDAL,countPublicRoomsDAL,fetchPublicRoomsDAL,updateRoomUsersDAL } from "../../data/dal/room.dal";
-// import { createRoomDAL, findRoomByCodeDAL } from "../dal/room.dal";
-
+// import { Room } from './room.interface'; // Adjust the path as needed
+import bcrypt from 'bcrypt';
+import { countPublicRoomsDAL, createRoomDAL, fetchPublicRoomsDAL, findRoomByCodeDAL, updateRoomUsersDAL } from '../../data/dal/room.dal'; 
+import { CreateRoomInput, Room } from 'src/core/interface/room.interface';
 const generateRoomCode = (): string => {
   return Math.random().toString(36).substring(2, 8).toUpperCase();
 };
-
 export const createRoomService = async ({
   roomName,
   questionIds,
@@ -13,60 +12,46 @@ export const createRoomService = async ({
   startTime,
   endTime,
   userId,
-}: {
-  roomName: string;
-  questionIds: string[];
-  status: string;
-  startTime: string;
-  endTime: string;
-  userId: string;
-}) => {
-  // Validate time fields
+}: CreateRoomInput): Promise<Room> => {
   const start = new Date(startTime);
   const end = new Date(endTime);
 
   if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-    throw new Error("Invalid startTime or endTime format");
+    throw new Error('Invalid startTime or endTime format');
   }
 
   if (end <= start) {
-    throw new Error("endTime must be later than startTime");
+    throw new Error('endTime must be later than startTime');
   }
 
-  // Calculate the duration (in minutes)
   const duration = Math.floor((end.getTime() - start.getTime()) / (1000 * 60));
-
-  // Ensure roomCode is unique
   let roomCode = generateRoomCode();
+
   while (await findRoomByCodeDAL(roomCode)) {
     roomCode = generateRoomCode();
   }
 
-  // Generate a hashed room identifier
   const saltRounds = 10;
   const roomHash = await bcrypt.hash(
     Math.random().toString(36).substring(2, 8).toUpperCase(),
     saltRounds,
   );
 
-  // Prepare the room object
-  const newRoom = {
+  const newRoom: Room = {
     roomName,
-    roomCode,
-    roomHash,
-    users: [userId],
     questionIds,
     status,
     startTime: start,
     endTime: end,
     duration,
+    roomCode,
+    roomHash,
+    users: [userId],
     userId,
   };
 
-  // Call the DAL to save the room
   return await createRoomDAL(newRoom);
 };
-
 
 
 export const getPublicRoomsService = async (page: number, limit: number) => {
