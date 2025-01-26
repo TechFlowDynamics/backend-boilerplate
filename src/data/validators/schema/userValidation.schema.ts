@@ -55,35 +55,36 @@ export const getUserSchema = Joi.object({
       "string.empty": "Username cannot be empty.",
     }),
 });
-
 export const createRoomSchema = Joi.object({
-  roomName: Joi.string().min(3).max(50).required().messages({
-    "string.min": "Room name must be at least {#limit} characters long.",
+  roomName: Joi.string().max(100).required().messages({
     "string.max": "Room name must not exceed {#limit} characters.",
     "string.empty": "Room name is required.",
   }),
-questionIds: Joi.array().items(
-  Joi.string().required().messages({
-    "string.empty": "Question ID is required.",
-  })
-).required().messages({
-  "array.base": "Question IDs must be an array.",
-  "array.empty": "Question IDs are required.",
-}),
-  status: Joi.string().valid("public", "private").required().messages({
-    "any.only": "Status must be either 'public' or 'private'.",
-    "string.empty": "Status is required.",
+  questionIds: Joi.array().items(Joi.string().required()).min(1).required().messages({
+    "array.min": "At least one question ID is required.",
+    "array.base": "Question IDs must be an array of strings.",
+  }),
+  type: Joi.string().valid("public", "private").required().messages({
+    "any.only": "Type must be either 'public' or 'private'.",
+    "string.empty": "Type is required.",
+  }),
+  roomSize: Joi.number().integer().min(1).required().messages({
+    "number.base": "Room size must be a number.",
+    "number.min": "Room size must be at least {#limit}.",
+    "number.empty": "Room size is required.",
+  }),
+  credits: Joi.string().required().messages({
+    "string.empty": "Credits are required.",
   }),
   startTime: Joi.date().iso().required().messages({
-    "date.format": "Start time must be in ISO format",
+    "date.format": "Start time must be in ISO 8601 date format.",
     "date.empty": "Start time is required.",
   }),
   endTime: Joi.date().iso().required().messages({
-    "date.format": "End time must be in ISO format",
+    "date.format": "End time must be in ISO 8601 date format.",
     "date.empty": "End time is required.",
   }),
 });
-
 export const joinRoomSchema = Joi.object({
   roomCode: Joi.string().length(6).required().messages({
     "string.length": "Room code must be exactly 6 characters long.",
