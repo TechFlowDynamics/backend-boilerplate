@@ -133,7 +133,7 @@ export const getPublicRoomsService = async (page: number, limit: number) => {
  * Service to join a room by room code.
  */
 export const joinRoomService = async (roomCode: string, userId: string) => {
-  console.log("roomCode backend", roomCode);
+ 
   const room = await findRoomByCodeDAL(roomCode);
   if (!room) {
     throw new Error(`Room with code ${roomCode} not found.`);

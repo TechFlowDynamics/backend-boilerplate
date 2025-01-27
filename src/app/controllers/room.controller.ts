@@ -95,7 +95,7 @@ export const joinRoom = async (
 
     // Call the service to join the room
     const roomData = await joinRoomService(roomCode, userId);
-    console.log("roomData backed", roomData);  
+   
     // Respond with the updated room data
     responseHandler(res, { room: roomData }, 200, "Joined room successfully");
   } catch (error) {
