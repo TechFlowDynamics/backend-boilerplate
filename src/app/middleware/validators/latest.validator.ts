@@ -71,6 +71,7 @@ export const createRoomValidate = (
   next: NextFunction,
 ) => {
   const payload = req.body;
+  console.log("createRoomValidate",req.body);
   const validatedValue = validateRequest(createRoomSchema, payload);
 
   if (validatedValue) {
@@ -84,9 +85,11 @@ export const joinRoomValidate = (
   res: Response,
   next: NextFunction,
 ) => {
+  console.log("joinRoomValidate",req.body);
   const payload = req.body;
+  console.log("payload", payload);
   const validatedValue = validateRequest(joinRoomSchema, payload);
-
+  console.log("validatedValue", validatedValue);
   if (validatedValue) {
     req.value = validatedValue;
     next();

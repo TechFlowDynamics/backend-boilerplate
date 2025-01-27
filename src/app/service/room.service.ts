@@ -12,10 +12,16 @@ import {
   RoomType,
 } from "../../core/interface/room.interface";
 
+/**
+ * Generate a random 6-character room code.
+ */
 export const generateRoomCode = (): string => {
   return Math.random().toString(36).substring(2, 8).toUpperCase();
 };
 
+/**
+ * Service to create a new room.
+ */
 export const createRoomService = async ({
   roomName,
   questionIds,
@@ -35,16 +41,14 @@ export const createRoomService = async ({
   roomSize: number;
   credits: string;
 }): Promise<IRoom> => {
+  // Validate time fields
   const start = new Date(startTime);
   const end = new Date(endTime);
-
-  // Validate time fields
   if (isNaN(start.getTime()) || isNaN(end.getTime())) {
     throw new Error(
       "Invalid startTime or endTime format. Please use a valid date format.",
     );
   }
-
   if (end <= start) {
     throw new Error("endTime must be later than startTime.");
   }
@@ -56,17 +60,15 @@ export const createRoomService = async ({
 
   // Calculate the duration
   const duration = Math.floor((end.getTime() - start.getTime()) / (1000 * 60));
+
+  // Generate roomCode and roomHash for private rooms
   let roomCode: string | undefined;
   let roomHash: string | undefined;
-
   if (type === RoomType.Private) {
-    // Generate unique roomCode
-    roomCode = generateRoomCode();
-    while (await findRoomByCodeDAL(roomCode)) {
+    do {
       roomCode = generateRoomCode();
-    }
+    } while (await findRoomByCodeDAL(roomCode)); // Ensure uniqueness
 
-    // Generate roomHash
     const saltRounds = 10;
     roomHash = await bcrypt.hash(
       Math.random().toString(36).substring(2, 8).toUpperCase(),
@@ -74,7 +76,7 @@ export const createRoomService = async ({
     );
   }
 
-  // Prepare room object
+  // Prepare the room object
   const newRoom: IRoom = {
     roomName,
     questionIds,
@@ -92,56 +94,67 @@ export const createRoomService = async ({
     createdAt: new Date(),
   };
 
-  // Save to database via DAL
+  // Save to database
   return await createRoomDAL(newRoom);
 };
 
+/**
+ * Service to fetch public rooms with pagination.
+ */
 export const getPublicRoomsService = async (page: number, limit: number) => {
   if (page <= 0 || limit <= 0) {
-    throw new Error("Page and limit must be greater than 0");
+    throw new Error("Page and limit must be greater than 0.");
   }
 
   const skip = (page - 1) * limit;
 
+  // Fetch rooms and count in parallel
   const [publicRooms, totalRooms] = await Promise.all([
     fetchPublicRoomsDAL(skip, limit),
     countPublicRoomsDAL(),
   ]);
 
-  if (publicRooms.length === 0) {
-    throw new Error("No public rooms found");
+  if (!publicRooms.length) {
+    throw new Error("No public rooms found.");
   }
-
-  const totalPages = Math.ceil(totalRooms / limit);
 
   return {
     rooms: publicRooms,
     pagination: {
       currentPage: page,
-      totalPages,
+      totalPages: Math.ceil(totalRooms / limit),
       totalRooms,
       pageSize: limit,
     },
   };
 };
 
+/**
+ * Service to join a room by room code.
+ */
 export const joinRoomService = async (roomCode: string, userId: string) => {
+  console.log("roomCode backend", roomCode);
   const room = await findRoomByCodeDAL(roomCode);
   if (!room) {
-    throw new Error(`Room with code ${roomCode} not found`);
+    throw new Error(`Room with code ${roomCode} not found.`);
   }
 
   const currentTime = new Date();
   if (currentTime < room.startTime || currentTime > room.endTime) {
     throw new Error(
-      `Room "${room.roomName}" is not active. Active between ${room.startTime} and ${room.endTime}`,
+      `Room "${room.roomName}" is not active. Active between ${room.startTime} and ${room.endTime}.`,
     );
   }
 
   if (room.users.includes(userId)) {
-    throw new Error("User is already in the room");
+    throw new Error("User is already in the room.");
   }
 
+  if (room.users.length >= room.roomSize) {
+    throw new Error("Room is full. Cannot join.");
+  }
+
+  // Add user to the room
   room.users.push(userId);
   return await updateRoomUsersDAL(room);
 };
