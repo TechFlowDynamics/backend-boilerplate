@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import {
   createRoomService,
+  exitRoomService,
   getPublicRoomsService,
   joinRoomService,
 } from "../service/room.service";
 import { responseHandler } from "../../core/handlers/response.handlers";
 import { findRoomByCodeDAL } from "../../data/dal/room.dal";
 import { ResponseMessages } from "../../core/constants/cloud.constants";
-import { stat } from "fs";
 
 /**
  * Create a new room.
@@ -216,5 +216,38 @@ export const verifyUserInRoom = async (
     return res
       .status(500)
       .json({ message: ResponseMessages.INTERNAL_SERVER_ERROR });
+  }
+};
+
+export const exitRoom = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const roomCode  = req.body.roomCode;
+    console.log("roomCode", roomCode);
+    const userId = req.userData?.userId?.toString();
+    if (!roomCode || typeof roomCode !== "string") {
+      return res.status(400).json({ message: "Invalid room code" });
+    }
+
+    if (!userId) {
+      return res.status(405).json({ message: ResponseMessages.UNAUTHORIZED });
+    }
+
+    const { room, message } = await exitRoomService(roomCode, userId);
+
+    let statusCode = 200;
+    if (message === "room_not_found") {
+      statusCode = 404;
+    } else if (message === "room_deleted") {
+      statusCode = 200;
+    }
+
+    return responseHandler(res, { room }, statusCode, message);
+  } catch (error) {
+    console.error("Error exiting room:", error);
+    next(error);
   }
 };

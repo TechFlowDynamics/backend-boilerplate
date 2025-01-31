@@ -29,3 +29,7 @@ export const fetchPublicRoomsDAL = async (skip: number = 0, limit: number = 10):
 export const countPublicRoomsDAL = async (): Promise<number> => {
   return await RoomModel.countDocuments({ type: RoomType.Public }); // Use enum for type safety
 };
+
+export const exitRoomDal = async(roomId: string) : Promise<IRoomDocument | null> => {
+  return await RoomModel.findByIdAndDelete(roomId);
+}

@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
 
   createRoom,
+  exitRoom,
   getPublicRooms,
   joinRoom,
   verifyUserInRoom,
@@ -22,6 +23,7 @@ router.get("/getPublicRooms", verifyToken, getPublicRooms);
 router.get("/:roomCode/verify", verifyToken, verifyUserInRoom);
 
 
+router.post("/exitroom", verifyToken, exitRoom);
 
 
 export default router;
