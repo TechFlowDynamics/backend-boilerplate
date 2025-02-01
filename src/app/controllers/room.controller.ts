@@ -177,6 +177,8 @@ export const getRooms = async (
     next(error);
   }
 };
+
+
 /**
  * Verify if a user is in a room.
  */

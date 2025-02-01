@@ -1,12 +1,9 @@
 import bcrypt from "bcrypt";
 import {
-
   countRoomsDAL,
   createRoomDAL,
   exitRoomDal,
- 
   fetchRoomsDAL,
- 
   findRoomByCodeDAL,
   updateRoomUsersDAL,
 } from "../../data/dal/room.dal";
@@ -45,24 +42,36 @@ export const createRoomService = async ({
   roomSize: number;
   credits: string;
 }): Promise<IRoom> => {
-  // Validate time fields
-  const start = new Date(startTime);
+  // ✅ Get current time in IST (UTC+5:30)
+  const nowUTC = new Date();
+  // const nowIST = new Date(nowUTC.getTime() + 5.5 * 60 * 60 * 1000); // Convert UTC to IST
+
+  // Convert startTime & endTime to Date objects
+  // const start = new Date(startTime);
   const end = new Date(endTime);
-  if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-    throw new Error(
-      "Invalid startTime or endTime format. Please use a valid date format.",
-    );
-  }
+
+  // ✅ Validate startTime is not in the past (IST)
+  const now = new Date(); // Server time (usually UTC)
+  const start = new Date(startTime); // Convert input time
+
+// Convert now to IST
+const nowIST = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
+
+if (start <= nowIST) {
+    throw new Error("Start time must be in the future (IST).");
+}
+
+  // ✅ Validate endTime is after startTime
   if (end <= start) {
-    throw new Error("endTime must be later than startTime.");
+    throw new Error("End time must be later than start time.");
   }
 
-  // Validate roomSize and credits
+  // ✅ Validate roomSize is greater than 0
   if (roomSize <= 0) {
-    throw new Error("roomSize must be greater than 0.");
+    throw new Error("Room size must be greater than 0.");
   }
 
-  // Calculate the duration
+  // Calculate the duration in minutes
   const duration = Math.floor((end.getTime() - start.getTime()) / (1000 * 60));
 
   // Generate roomCode and roomHash for private rooms
@@ -120,21 +129,17 @@ export const getRoomsService = async (page: number, limit: number) => {
     countRoomsDAL(currentTime), // Count only active rooms
   ]);
 
-  if (!rooms.length) {
-    throw new Error("No active rooms found.");
-  }
-
   return {
     rooms,
     pagination: {
       currentPage: page,
-      totalPages: Math.ceil(totalRooms / limit),
+      totalPages: totalRooms > 0 ? Math.ceil(totalRooms / limit) : 1, // Ensure at least 1 page
       totalRooms,
       pageSize: limit,
     },
+    message: rooms.length ? undefined : "No active rooms available.", // Message only if no rooms
   };
 };
-
 
 /**
  * Service to join a room by room code.
