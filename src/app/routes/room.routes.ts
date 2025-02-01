@@ -3,7 +3,7 @@ import {
 
   createRoom,
   exitRoom,
-  getPublicRooms,
+  getRooms,
   joinRoom,
   verifyUserInRoom,
 } from "../controllers/room.controller";
@@ -19,7 +19,7 @@ router.route("/createroom").post(verifyToken, createRoomValidate, createRoom);
 
 router.route("/joinroom").post(verifyToken, joinRoomValidate, joinRoom);
 
-router.get("/getPublicRooms", verifyToken, getPublicRooms);
+router.get("/getRooms", verifyToken, getRooms);
 router.get("/:roomCode/verify", verifyToken, verifyUserInRoom);
 
 

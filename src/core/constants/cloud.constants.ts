@@ -230,5 +230,5 @@ export const ResponseMessages = Object.freeze({
   RES_MSG_ROOM_ENDED_EN: "Room has already ended.",
   RES_MSG_NEW_USER_JOINED_EN: "New user joined successfully.",
   RES_MSG_BAD_REQUEST_EN: "Invalid request. Missing or incorrect parameters.",
-  RES_MSG_PUBLIC_ROOMS_FETCHED_EN: "Public rooms fetched successfully.",
+  RES_MSG_ROOMS_FETCHED_EN: "Rooms fetched successfully.",
 });

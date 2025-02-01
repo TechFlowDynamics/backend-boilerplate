@@ -1,9 +1,12 @@
 import bcrypt from "bcrypt";
 import {
-  countPublicRoomsDAL,
+
+  countRoomsDAL,
   createRoomDAL,
   exitRoomDal,
-  fetchPublicRoomsDAL,
+ 
+  fetchRoomsDAL,
+ 
   findRoomByCodeDAL,
   updateRoomUsersDAL,
 } from "../../data/dal/room.dal";
@@ -102,25 +105,27 @@ export const createRoomService = async ({
 /**
  * Service to fetch public rooms with pagination.
  */
-export const getPublicRoomsService = async (page: number, limit: number) => {
+
+export const getRoomsService = async (page: number, limit: number) => {
   if (page <= 0 || limit <= 0) {
     throw new Error("Page and limit must be greater than 0.");
   }
 
   const skip = (page - 1) * limit;
+  const currentTime = new Date();
 
-  // Fetch rooms and count in parallel
-  const [publicRooms, totalRooms] = await Promise.all([
-    fetchPublicRoomsDAL(skip, limit),
-    countPublicRoomsDAL(),
+  // Fetch only active rooms (endTime > current time) and count in parallel
+  const [rooms, totalRooms] = await Promise.all([
+    fetchRoomsDAL(skip, limit, currentTime), // Pass current time to filter active rooms
+    countRoomsDAL(currentTime), // Count only active rooms
   ]);
 
-  if (!publicRooms.length) {
-    throw new Error("No public rooms found.");
+  if (!rooms.length) {
+    throw new Error("No active rooms found.");
   }
 
   return {
-    rooms: publicRooms,
+    rooms,
     pagination: {
       currentPage: page,
       totalPages: Math.ceil(totalRooms / limit),
@@ -129,6 +134,7 @@ export const getPublicRoomsService = async (page: number, limit: number) => {
     },
   };
 };
+
 
 /**
  * Service to join a room by room code.

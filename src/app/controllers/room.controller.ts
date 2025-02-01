@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import {
   createRoomService,
   exitRoomService,
-  getPublicRoomsService,
+  getRoomsService,
   joinRoomService,
 } from "../service/room.service";
 import { responseHandler } from "../../core/handlers/response.handlers";
@@ -141,7 +141,7 @@ export const joinRoom = async (
 /**
  * Get public rooms with pagination.
  */
-export const getPublicRooms = async (
+export const getRooms = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -158,25 +158,25 @@ export const getPublicRooms = async (
       isNaN(limitNumber) ||
       limitNumber <= 0
     ) {
-      res
-        .status(400)
-        .json({ message: ResponseMessages.RES_MSG_PAGE_OUT_OF_BOUNDS_EN });
+      res.status(400).json({
+        message: ResponseMessages.RES_MSG_PAGE_OUT_OF_BOUNDS_EN,
+      });
       return;
     }
 
-    const publicRooms = await getPublicRoomsService(pageNumber, limitNumber);
+    const roomsData = await getRoomsService(pageNumber, limitNumber);
     return responseHandler(
       res,
-      publicRooms,
+      roomsData,
       200,
-      ResponseMessages.RES_MSG_PUBLIC_ROOMS_FETCHED_EN,
+      ResponseMessages.RES_MSG_ROOMS_FETCHED_EN ||
+        "Rooms fetched successfully."
     );
   } catch (error) {
-    console.error("Error fetching public rooms:", error);
+    console.error("Error fetching rooms:", error);
     next(error);
   }
 };
-
 /**
  * Verify if a user is in a room.
  */
@@ -237,7 +237,7 @@ export const exitRoom = async (
     }
 
     const { room, message } = await exitRoomService(roomCode, userId);
-
+    
     let statusCode = 200;
     if (message === "room_not_found") {
       statusCode = 404;
